@@ -1,0 +1,63 @@
+.landing-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(24px, 5vw, 64px) 24px 24px;
+  background:
+    radial-gradient(ellipse at 15% 10%, color-mix(in srgb, var(--color-blue) 5%, transparent), transparent 55%),
+    radial-gradient(ellipse at 90% 85%, color-mix(in srgb, var(--color-secondary) 6%, transparent), transparent 55%);
+}
+.development {
+  width: 100%;
+  max-width: 620px;
+  margin-block: auto;
+  padding-block: 24px 48px;
+  text-align: center;
+}
+.parkiva-logo { width: clamp(200px, 48vw, 280px); height: auto; margin: 0 auto; }
+.tagline {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: clamp(14px, 2.5vw, 17px);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+.accent-line {
+  width: 40px;
+  height: 3px;
+  margin: 30px auto;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-blue), var(--color-secondary));
+}
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 5.5vw, 46px);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.description {
+  max-width: 460px;
+  margin: 20px auto 28px;
+  color: var(--color-text-muted);
+  font-size: clamp(15px, 2.4vw, 17px);
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+.development-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-secondary); }
+.page-footer { max-width: 540px; color: var(--color-text-muted); font-size: 11px; line-height: 1.8; text-align: center; }
+.page-footer span { margin-inline: 5px; }
+.page-footer p { margin: 0; }
+.page-footer p + p { margin-top: 6px; }
