@@ -6,6 +6,47 @@ Parkiva is a web-based Public Parking Reservation and Management System designed
 
 The platform is intended to help users locate participating parking areas, check availability, reserve a space before arriving, manage vehicle information, and use QR-based verification during entry and exit. For parking operators, it is intended to provide a centralized way to monitor reservations, vehicles, and parking slot statuses: Available, Reserved, and Occupied.
 
+
+## Development Workflow
+
+Parkiva follows a developer-led workflow supported by a dedicated Quality Assurance (QA) team.
+
+```mermaid
+flowchart TB
+    DEV["Full-Stack Developer<br/>Cyrus Gabriel Macrohon<br/>Development & Deployment"]
+
+    QA1["Christian Angelo Refalbor<br/>QA Tester"]
+    QA2["Christene Pearl Baes<br/>QA Tester"]
+    QA3["Christian Reynz Agosto<br/>QA Tester"]
+    QA4["Real Ryan Abarquez<br/>QA Tester"]
+
+    ISSUES["GitHub Issues<br/>Bug Reports, Feature Requests & Testing"]
+
+    DEV --> QA1
+    DEV --> QA2
+    DEV --> QA3
+    DEV --> QA4
+
+    QA1 --> ISSUES
+    QA2 --> ISSUES
+    QA3 --> ISSUES
+    QA4 --> ISSUES
+
+    classDef developer fill:#243447,stroke:#58a6ff,color:#ffffff
+    classDef qa fill:#2d333b,stroke:#8b949e,color:#ffffff
+    classDef issues fill:#173b2e,stroke:#3fb950,color:#ffffff
+
+    class DEV developer
+    class QA1,QA2,QA3,QA4 qa
+    class ISSUES issues
+```
+### Project Management
+
+Development tasks, feature requests, and QA reports are
+tracked using GitHub Issues and GitHub Projects.
+
+[View Parkiva Development Board](https://github.com/orgs/UIC-CCS-WEB-DEVELOPMENT-2026-2027/projects/12)
+
 ## Project Objectives
 
 - Reduce the time drivers spend searching for parking.
