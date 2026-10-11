@@ -4,13 +4,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(24px, 5vw, 64px) 24px 24px;
+  padding: 0 0 24px;
   background:
     radial-gradient(ellipse at 15% 10%, color-mix(in srgb, var(--color-blue) 5%, transparent), transparent 55%),
     radial-gradient(ellipse at 90% 85%, color-mix(in srgb, var(--color-secondary) 6%, transparent), transparent 55%);
 }
 .development {
-  width: 100%;
+  width: calc(100% - 48px);
   max-width: 620px;
   margin-block: auto;
   padding-block: 24px 48px;
@@ -61,3 +61,25 @@ h1 {
 .page-footer span { margin-inline: 5px; }
 .page-footer p { margin: 0; }
 .page-footer p + p { margin-top: 6px; }
+
+.site-header { width: 100%; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+.navbar { max-width: 1200px; margin-inline: auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.navbar-logo { width: 56px; height: 56px; }
+.nav-controls { display: flex; align-items: center; gap: 8px; }
+.nav-button, .guest-dropdown button { font: inherit; font-size: 14px; color: var(--color-primary); background: transparent; border: 0; border-radius: 4px; cursor: pointer; min-height: 44px; padding: 10px 12px; }
+.nav-button:hover, .guest-dropdown button:hover { background: var(--color-background); }
+button:focus-visible, .development:focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
+.guest-control { position: relative; }
+.guest-button { display: flex; align-items: center; gap: 6px; }
+.guest-button svg { width: 18px; height: 18px; }
+.guest-button .chevron { width: 14px; height: 14px; }
+.guest-dropdown { position: absolute; top: calc(100% + 6px); right: 0; z-index: 1; width: 200px; max-width: calc(100vw - 32px); padding: 4px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); }
+.guest-dropdown button { display: block; width: 100%; text-align: left; }
+.auth-notice { margin: 0; padding: 8px 12px; color: var(--color-text-muted); font-size: 13px; line-height: 1.5; }
+.auth-notice:empty { display: none; }
+.page-footer { margin-inline: 24px; }
+@media (max-width: 375px) {
+  .navbar { padding-inline: 16px; gap: 8px; }
+  .nav-controls { gap: 2px; }
+  .nav-button { padding-inline: 8px; }
+}
