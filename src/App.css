@@ -59,10 +59,6 @@ h1 {
   font-weight: 400;
 }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-secondary); }
-.page-footer { max-width: 540px; color: var(--color-text-muted); font-size: 11px; line-height: 1.8; text-align: center; }
-.page-footer span { margin-inline: 5px; }
-.page-footer p { margin: 0; }
-.page-footer p + p { margin-top: 6px; }
 
 .site-header { width: 100%; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
 .navbar { max-width: 1200px; margin-inline: auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -79,7 +75,6 @@ button:focus-visible, .development:focus-visible { outline: 2px solid var(--colo
 .guest-dropdown button { display: block; width: 100%; text-align: left; }
 .auth-notice { margin: 0; padding: 8px 12px; color: var(--color-text-muted); font-size: 13px; line-height: 1.5; }
 .auth-notice:empty { display: none; }
-.page-footer { margin-inline: 24px; }
 @media (max-width: 375px) {
   .navbar { padding-inline: 16px; gap: 8px; }
   .nav-controls { gap: 2px; }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import ParkingDiscovery from './components/ParkingDiscovery'
+import Footer from './components/Footer'
 
 export default function App() {
   const [guestOpen, setGuestOpen] = useState(false)
@@ -82,13 +83,7 @@ export default function App() {
         </p>
       </section>
       </main>
-      <footer className="page-footer">
-        <p>
-        Parkiva <span aria-hidden="true">&middot;</span> Public Parking Reservation
-        &amp; Management System
-        </p>
-        <p>Parkiva Team</p>
-      </footer>
+      <Footer />
     </div>
   )
 }
