@@ -10,6 +10,7 @@
 .parking-reset:hover { background: var(--color-background); }
 .parking-discovery :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
 .parking-result-count { margin: 24px 0 16px; font-size: 14px; color: var(--color-text-muted); }
+.parking-discovery-favorites { margin-top: 24px; }
 .parking-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
 .parking-card { border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); overflow: hidden; }
 .parking-placeholder { display: flex; align-items: center; justify-content: center; height: 148px; background: #edf2f5; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); font-size: 13px; }

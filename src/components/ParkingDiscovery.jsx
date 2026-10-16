@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { parkingAreas } from './parkingData'
+import { useParkingFavorites } from './ParkingFavorites'
 import './ParkingDiscovery.css'
 
 export default function ParkingDiscovery() {
@@ -7,11 +8,14 @@ export default function ParkingDiscovery() {
   const [vehicle, setVehicle] = useState('')
   const [availability, setAvailability] = useState('')
   const [expandedId, setExpandedId] = useState(null)
+  const { savedIds, toggleSaved } = useParkingFavorites(parkingAreas)
+  const [savedOnly, setSavedOnly] = useState(false)
   const query = search.trim().toLowerCase()
   const results = parkingAreas.filter((area) =>
     `${area.name} ${area.location}`.toLowerCase().includes(query) &&
     (!vehicle || area.vehicles.includes(vehicle)) &&
-    (!availability || area.availability === availability),
+    (!availability || area.availability === availability) &&
+    (!savedOnly || savedIds.includes(area.id)),
   )
 
   function resetFilters() {
@@ -19,6 +23,7 @@ export default function ParkingDiscovery() {
     setVehicle('')
     setAvailability('')
     setExpandedId(null)
+    setSavedOnly(false)
   }
 
   return (
@@ -51,9 +56,15 @@ export default function ParkingDiscovery() {
         <button className="parking-reset" type="button" onClick={resetFilters}>Reset Filters</button>
       </form>
 
+      <div className="parking-favorites-toolbar parking-discovery-favorites">
+        <p className="parking-favorites-count" role="status">{savedIds.length} {savedIds.length === 1 ? 'parking area' : 'parking areas'} saved</p>
+        <button className="parking-favorites-filter" type="button" aria-pressed={savedOnly} onClick={() => setSavedOnly((value) => !value)}>
+          {savedOnly ? 'Show All' : 'Saved Only'}
+        </button>
+      </div>
       <p className="parking-result-count" role="status">{results.length} {results.length === 1 ? 'parking area' : 'parking areas'} shown</p>
       {results.length === 0 ? (
-        <p className="parking-empty">No parking areas match your filters. Try another search or reset the filters.</p>
+        <p className="parking-empty">{savedOnly && savedIds.length === 0 ? 'You haven’t saved any parking areas yet.' : 'No parking areas match your filters. Try another search or reset the filters.'}</p>
       ) : (
         <div className="parking-grid">
           {results.map((area) => {
@@ -64,6 +75,9 @@ export default function ParkingDiscovery() {
                 <div className="parking-card-content">
                   <h2 id={`${area.id}-name`}>{area.name}</h2>
                   <p className="parking-location">{area.location}</p>
+                  <button className="parking-favorite-save" type="button" aria-pressed={savedIds.includes(area.id)} onClick={() => toggleSaved(area.id)}>
+                    {savedIds.includes(area.id) ? 'Unsave' : 'Save'}<span className="parking-sr-only"> {area.name}</span>
+                  </button>
                   <dl className="parking-facts">
                     <div><dt>Vehicles</dt><dd>{area.vehicles.join(', ')}</dd></div>
                     <div><dt>Mock status</dt><dd>{area.availability}</dd></div>
