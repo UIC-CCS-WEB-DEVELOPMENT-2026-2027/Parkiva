@@ -15,10 +15,10 @@ Parkiva follows a developer-led workflow supported by a dedicated Quality Assura
 flowchart TB
     DEV["Full-Stack Developer<br/>Cyrus Gabriel Macrohon<br/>Development & Deployment"]
 
-    QA1["Christian Angelo Refalbor<br/>QA Tester"]
-    QA2["Christene Pearl Baes<br/>QA Tester"]
-    QA3["Christian Reynz Agosto<br/>QA Tester"]
-    QA4["Real Ryan Abarquez<br/>QA Tester"]
+    QA1["Christian Angelo Refalbor<br/>Coder & QA Tester"]
+    QA2["Christene Pearl Baes<br/>Coder & QA Tester"]
+    QA3["Christian Reynz Agosto<br/>Coder & QA Tester"]
+    QA4["Real Ryan Abarquez<br/>Coder & QA Tester"]
 
     ISSUES["GitHub Issues<br/>Bug Reports, Feature Requests & Testing"]
 
