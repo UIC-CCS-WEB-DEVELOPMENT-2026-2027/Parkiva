@@ -1,0 +1,39 @@
+.parkiva-footer {
+  width: min(100% - 32px, 540px);
+  margin: 0 auto;
+  color: var(--color-text-muted, #536477);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.parkiva-footer p {
+  margin: 0;
+}
+
+.parkiva-footer__description {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 5px;
+}
+
+.parkiva-footer__name {
+  color: var(--color-primary, #022664);
+  font-weight: 600;
+}
+
+.parkiva-footer__separator {
+  color: var(--color-secondary, #05997e);
+}
+
+.parkiva-footer__team {
+  margin-top: 4px !important;
+}
+
+@media (max-width: 375px) {
+  .parkiva-footer {
+    width: calc(100% - 32px);
+    font-size: 11px;
+  }
+}
