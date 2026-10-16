@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import ParkingDiscovery from './components/ParkingDiscovery'
 
 export default function App() {
   const [guestOpen, setGuestOpen] = useState(false)
   const [notice, setNotice] = useState('')
   const guestRef = useRef(null)
   const guestButtonRef = useRef(null)
-  const developmentRef = useRef(null)
 
   useEffect(() => {
     if (!guestOpen) return
@@ -29,8 +29,9 @@ export default function App() {
 
   function browse() {
     setGuestOpen(false)
-    developmentRef.current.focus({ preventScroll: true })
-    developmentRef.current.scrollIntoView({ block: 'center' })
+    const heading = document.getElementById('parking-heading')
+    heading.focus({ preventScroll: true })
+    heading.scrollIntoView({ block: 'start' })
   }
 
   return (
@@ -64,11 +65,13 @@ export default function App() {
           </div>
         </nav>
       </header>
-      <main className="development" ref={developmentRef} tabIndex={-1} aria-labelledby="development-heading">
+      <main className="discovery-main">
+      <ParkingDiscovery />
+      <section className="development" aria-labelledby="development-heading">
         <img className="parkiva-logo" src="/parkiva.png" alt="Parkiva logo" />
         <p className="tagline">Smarter Parking Starts Here.</p>
         <div className="accent-line" aria-hidden="true" />
-        <h1 id="development-heading">Still in Development</h1>
+        <h2 id="development-heading">Still in Development</h2>
         <p className="description">
           We're currently building Parkiva, a smarter and more convenient way
           to find and reserve parking spaces.
@@ -77,6 +80,7 @@ export default function App() {
           <span className="status-dot" aria-hidden="true" />
           Development in Progress
         </p>
+      </section>
       </main>
       <footer className="page-footer">
         <p>
