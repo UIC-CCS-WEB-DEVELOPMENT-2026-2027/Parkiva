@@ -3,10 +3,13 @@ import { parkingAreas } from './parkingData'
 import { useParkingFavorites } from './ParkingFavorites'
 import './ParkingDiscovery.css'
 
+const availabilityOrder = { Available: 0, Limited: 1, Full: 2 }
+
 export default function ParkingDiscovery() {
   const [search, setSearch] = useState('')
   const [vehicle, setVehicle] = useState('')
   const [availability, setAvailability] = useState('')
+  const [sortBy, setSortBy] = useState('default')
   const [expandedId, setExpandedId] = useState(null)
   const { savedIds, toggleSaved } = useParkingFavorites(parkingAreas)
   const [savedOnly, setSavedOnly] = useState(false)
@@ -18,10 +21,20 @@ export default function ParkingDiscovery() {
     (!savedOnly || savedIds.includes(area.id)),
   )
 
+  // Filtering creates a new array, so sorting never changes the source order.
+  if (sortBy === 'name-asc') {
+    results.sort((a, b) => a.name.localeCompare(b.name))
+  } else if (sortBy === 'name-desc') {
+    results.sort((a, b) => b.name.localeCompare(a.name))
+  } else if (sortBy === 'availability') {
+    results.sort((a, b) => availabilityOrder[a.availability] - availabilityOrder[b.availability])
+  }
+
   function resetFilters() {
     setSearch('')
     setVehicle('')
     setAvailability('')
+    setSortBy('default')
     setExpandedId(null)
     setSavedOnly(false)
   }
@@ -51,6 +64,15 @@ export default function ParkingDiscovery() {
             <option value="Available">Available</option>
             <option value="Limited">Limited</option>
             <option value="Full">Full</option>
+          </select>
+        </label>
+        <label className="parking-sort">
+          Sort By
+          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+            <option value="default">Default Order</option>
+            <option value="name-asc">Name (A–Z)</option>
+            <option value="name-desc">Name (Z–A)</option>
+            <option value="availability">Availability (Available First)</option>
           </select>
         </label>
         <button className="parking-reset" type="button" onClick={resetFilters}>Reset Filters</button>
