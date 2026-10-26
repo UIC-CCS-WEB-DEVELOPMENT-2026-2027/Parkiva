@@ -102,20 +102,10 @@ function ParkivaApp() {
       {view === 'operator' && <OperatorDashboard onBrowse={browse} />}
       {(view === 'login' || view === 'register') && <DemoAuthForm key={view} mode={view} onSwitch={openAuth} onBrowse={browse}
         onComplete={(session) => { setDemoSession(session); setSessionNotice(''); browse() }} />}
-      <section className="development" aria-labelledby="development-heading">
-        <img className="parkiva-logo" src="/parkiva.png" alt="Parkiva logo" />
-        <p className="tagline">Smarter Parking Starts Here.</p>
-        <div className="accent-line" aria-hidden="true" />
-        <h2 id="development-heading">Still in Development</h2>
-        <p className="description">
-          We're currently building Parkiva, a smarter and more convenient way
-          to find and reserve parking spaces.
-        </p>
-        <p className="development-status">
-          <span className="status-dot" aria-hidden="true" />
-          Development in Progress
-        </p>
-      </section>
+      <aside className="development" aria-labelledby="development-heading">
+        <h2 id="development-heading"><span className="status-dot" aria-hidden="true" />Still in Development</h2>
+        <p>Student demo. All parking data and reservations are simulated.</p>
+      </aside>
       </main>
       <Footer />
     </div>

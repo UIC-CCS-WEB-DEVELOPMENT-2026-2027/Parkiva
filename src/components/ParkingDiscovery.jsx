@@ -3,6 +3,7 @@ import { useMockParking } from './MockParkingContext'
 import { parkingAreas as parkingCatalog } from './parkingData'
 import { useParkingFavorites } from './ParkingFavorites'
 import ParkingDetailsModal from './ParkingDetailsModal'
+import ParkingDemoIllustration from './ParkingDemoIllustration'
 import './ParkingDiscovery.css'
 
 const availabilityOrder = { Available: 0, Limited: 1, Full: 2 }
@@ -96,7 +97,7 @@ export default function ParkingDiscovery() {
           {results.map((area) => {
             return (
               <article className="parking-card" key={area.id} aria-labelledby={`${area.id}-name`}>
-                <div className="parking-placeholder" role="img" aria-label={`Image placeholder for ${area.name}`}>Parking image placeholder</div>
+                <ParkingDemoIllustration facilityId={area.id} />
                 <div className="parking-card-content">
                   <h2 id={`${area.id}-name`}>{area.name}</h2>
                   <p className="parking-location">{area.location}</p>
