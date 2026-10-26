@@ -12,10 +12,6 @@
 .reservation-flow-actions .reservation-flow-primary { background: var(--color-primary); border-color: var(--color-primary); color: white; }
 .reservation-flow-actions .reservation-flow-primary:hover { background: #103b78; }
 .reservation-flow-actions button:disabled { opacity: 0.55; cursor: not-allowed; }
-.reservation-flow-review { margin: 20px 0; font-size: 14px; line-height: 1.6; }
-.reservation-flow-review div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border); }
-.reservation-flow-review dt { color: var(--color-text-muted); }
-.reservation-flow-review dd { margin: 0; }
 @media (max-width: 400px) {
   .reservation-datetime-fields { grid-template-columns: minmax(0, 1fr); }
   .reservation-flow-actions button { flex: 1 1 100%; }

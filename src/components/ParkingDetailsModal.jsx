@@ -54,7 +54,7 @@ export default function ParkingDetailsModal({ area, onClose }) {
           <h3 id="parking-details-entrance">Entrance information</h3>
           <p>{area.access}</p>
         </section>
-        <ParkingReservationFlow key={area.id} slots={parkingSlotsByFacility[area.id]} supportedVehicles={area.vehicles} />
+        <ParkingReservationFlow key={area.id} facility={area} slots={parkingSlotsByFacility[area.id]} supportedVehicles={area.vehicles} />
         <p className="parking-details-modal-note">Fictional example for demonstration only. Availability is not live.</p>
       </div>
     </dialog>
