@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import './ParkingFavorites.css'
+import { getDemoStorage, isDemoStorageEvent } from './demoAccounts'
+import { DEMO_DATA_EVENT, notifyDemoDataChanged } from './mockSlotState'
 
 const STORAGE_KEY = 'parkiva-saved-parking-ids'
 
-function readSavedIds() {
+function readSavedIds(storage) {
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY)
+    const stored = storage?.getItem(STORAGE_KEY)
     if (!stored) return []
 
     const parsed = JSON.parse(stored)
@@ -29,7 +31,10 @@ function readSavedIds() {
  * buttons directly on its cards and apply saved-only filtering there.
  */
 export function useParkingFavorites(parkingAreas = []) {
-  const [savedIds, setSavedIds] = useState(readSavedIds)
+  // AccountWorkspace remounts this hook on role changes. Capture its namespace so
+  // a delayed effect can never write old favorites into a newly selected account.
+  const [storage] = useState(() => { try { return getDemoStorage() } catch { return null } })
+  const [savedIds, setSavedIds] = useState(() => readSavedIds(storage))
   const validIds = useMemo(() => new Set(parkingAreas.map((area) => area.id)), [parkingAreas])
 
   // Drop IDs that no longer exist in the source parking data.
@@ -40,11 +45,24 @@ export function useParkingFavorites(parkingAreas = []) {
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSavedIds))
+      if (!storage) return
+      const value = JSON.stringify(currentSavedIds)
+      if (storage.getItem(STORAGE_KEY) !== value) { storage.setItem(STORAGE_KEY, value); notifyDemoDataChanged() }
     } catch {
       // Favorites remain usable for this page view when storage is unavailable.
     }
-  }, [currentSavedIds])
+  }, [currentSavedIds, storage])
+
+  useEffect(() => {
+    const sync = () => {
+      const next = readSavedIds(storage)
+      setSavedIds((previous) => JSON.stringify(previous) === JSON.stringify(next) ? previous : next)
+    }
+    const onStorage = (event) => { if (isDemoStorageEvent(event.key, STORAGE_KEY)) sync() }
+    window.addEventListener('storage', onStorage)
+    window.addEventListener(DEMO_DATA_EVENT, sync)
+    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener(DEMO_DATA_EVENT, sync) }
+  }, [storage])
 
   function toggleSaved(id) {
     if (!validIds.has(id)) return

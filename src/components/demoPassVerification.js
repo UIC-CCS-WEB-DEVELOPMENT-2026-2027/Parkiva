@@ -1,3 +1,4 @@
+import { getDemoStorage } from './demoAccounts.js'
 import { DEMO_RESERVATIONS_KEY, readDemoReservations } from './demoReservations.js'
 import { notifyDemoDataChanged } from './mockSlotState.js'
 
@@ -18,7 +19,7 @@ export async function verifyDemoPass(token, action, options = {}) {
     const reference = referenceFromDemoToken(token)
     if (!reference || !['entry', 'exit'].includes(action)) return { ok: false, error: 'Invalid demo pass token or verification action.' }
     if (options.expectedReference && reference !== options.expectedReference) return { ok: false, error: 'This token does not match the displayed demo reservation.' }
-    const storage = options.storage ?? globalThis.localStorage
+    const storage = options.storage ?? getDemoStorage()
     const locks = options.locks ?? globalThis.navigator?.locks
     if (!locks?.request) return { ok: false, error: 'Demo verification requires browser storage and Web Locks. No change was recorded.' }
     return await locks.request(DEMO_RESERVATIONS_KEY, () => {

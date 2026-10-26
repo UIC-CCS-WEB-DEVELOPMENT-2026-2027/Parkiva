@@ -1,3 +1,4 @@
+import { getDemoStorage, isDemoStorageEvent } from './demoAccounts'
 import { useEffect, useState } from 'react'
 import { DEMO_NOTICE, DEMO_RESERVATIONS_KEY, readDemoReservations } from './demoReservations'
 import ReservationHistoryCard from './ReservationHistoryCard'
@@ -12,7 +13,7 @@ export default function ReservationHistory({ onBrowse }) {
   function refresh() {
     setNow(new Date())
     try {
-      setRecords(readDemoReservations(window.localStorage).sort((a, b) => b.confirmedAt.localeCompare(a.confirmedAt)))
+      setRecords(readDemoReservations(getDemoStorage()).sort((a, b) => b.confirmedAt.localeCompare(a.confirmedAt)))
       setError('')
     } catch {
       setRecords([])
@@ -22,7 +23,7 @@ export default function ReservationHistory({ onBrowse }) {
 
   useEffect(() => {
     refresh()
-    const sync = (event) => { if (event.key === DEMO_RESERVATIONS_KEY || event.key === null) refresh() }
+    const sync = (event) => { if (isDemoStorageEvent(event.key, DEMO_RESERVATIONS_KEY)) refresh() }
     window.addEventListener('storage', sync)
     window.addEventListener('focus', refresh)
     const timer = window.setInterval(refresh, 30000)
@@ -37,7 +38,7 @@ export default function ReservationHistory({ onBrowse }) {
     <section className="reservation-history" aria-labelledby="reservations-heading">
       <h1 id="reservations-heading" tabIndex={-1}>My Reservations</h1>
       <p className="demo-reservation-notice">{DEMO_NOTICE}</p>
-      <p>Demo reservations saved in this browser. No account is required. Times use your local time zone.</p>
+      <p>Demo reservations saved in the current guest or demo-account workspace in this browser. This separation is simulated, not secure account storage. Times use your local time zone.</p>
       <div className="reservation-history-actions">
         <button type="button" onClick={onBrowse}>Browse parking</button>
         <button type="button" onClick={() => { setMessage(''); refresh() }}>Refresh reservations</button>

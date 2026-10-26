@@ -1,3 +1,4 @@
+import { canManageDemoFacility, getDemoStorage } from './demoAccounts.js'
 export const MOCK_SLOTS_KEY = 'parkiva-mock-slot-statuses-v1'
 export const DEMO_DATA_EVENT = 'parkiva-demo-data-changed'
 export const SLOT_STATUSES = ['Available', 'Reserved', 'Occupied']
@@ -47,7 +48,8 @@ export function mockFacilityAvailability(slots) {
 export async function saveMockSlotStatus(facilityId, slotId, status, catalog, options = {}) {
   try {
     if (!catalog[facilityId]?.some((slot) => slot.id === slotId) || !SLOT_STATUSES.includes(status)) return { ok: false, error: 'Choose a known facility, slot, and mock status.' }
-    const storage = options.storage ?? globalThis.localStorage
+    const storage = options.storage ?? getDemoStorage()
+    if (!canManageDemoFacility(options.accountId ?? storage.accountId, facilityId)) return { ok: false, error: 'Only the operator demo account can edit facilities in its assigned simulation list. No real management rights are granted.' }
     const locks = options.locks ?? globalThis.navigator?.locks
     if (!locks?.request) return { ok: false, error: 'Browser storage and Web Locks are required to save mock changes.' }
     // Share the reservation lock so confirmations see the latest slot changes.
