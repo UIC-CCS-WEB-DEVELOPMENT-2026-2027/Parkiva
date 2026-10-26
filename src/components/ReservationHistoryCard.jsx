@@ -1,9 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { cancelDemoReservation, demoReservationStatus } from './demoReservations'
+import DemoParkingPass from './DemoParkingPass'
 
 export default function ReservationHistoryCard({ reservation, now, onUpdated }) {
   const id = useId()
   const [details, setDetails] = useState(false)
+  const [showPass, setShowPass] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -49,9 +51,11 @@ export default function ReservationHistoryCard({ reservation, now, onUpdated }) 
         <div><dt>Time (local)</dt><dd>{reservation.dateTime.arrival}–{reservation.dateTime.departure}</dd></div>
       </dl>
       <div className="reservation-history-actions">
+        <button type="button" aria-expanded={showPass} aria-controls={`${id}-pass`} onClick={() => setShowPass(!showPass)}>{showPass ? 'Hide demo pass' : 'View demo pass'}<span className="parking-sr-only"> for {reservation.reference}</span></button>
         <button type="button" aria-expanded={details} aria-controls={`${id}-details`} onClick={() => setDetails(!details)}>{details ? 'Hide details' : 'View details'}<span className="parking-sr-only"> for {reservation.reference}</span></button>
         {status === 'Upcoming' && <button ref={cancelRef} type="button" disabled={confirming || saving} onClick={() => { setError(''); setConfirming(true) }}>Cancel demo reservation<span className="parking-sr-only"> {reservation.reference}</span></button>}
       </div>
+      <div id={`${id}-pass`}>{showPass && <DemoParkingPass reference={reservation.reference} revision={reservation.cancelledAt} />}</div>
       <div id={`${id}-details`} hidden={!details}>
         <dl>
           <div><dt>Location</dt><dd>{reservation.facility.location}</dd></div>

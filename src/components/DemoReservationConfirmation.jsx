@@ -1,7 +1,10 @@
 import { DEMO_NOTICE } from './demoReservations'
 import './DemoReservationConfirmation.css'
+import { useState } from 'react'
+import DemoParkingPass from './DemoParkingPass'
 
 export default function DemoReservationConfirmation({ reservation, onRestart, onChooseParking }) {
+  const [showPass, setShowPass] = useState(false)
   return (
     <section className="demo-confirmation" aria-label="Demo reservation confirmation">
       <p className="demo-reservation-notice">{DEMO_NOTICE}</p>
@@ -18,9 +21,11 @@ export default function DemoReservationConfirmation({ reservation, onRestart, on
         <div><dt>Departure time</dt><dd>{reservation.dateTime.departure}</dd></div>
       </dl>
       <div className="reservation-flow-actions">
+        <button type="button" aria-expanded={showPass} onClick={() => setShowPass(!showPass)}>{showPass ? 'Hide demo pass' : 'View demo pass'}</button>
         <button type="button" onClick={onRestart}>Start another demo reservation</button>
         <button type="button" onClick={onChooseParking}>Back to parking selection</button>
       </div>
+      {showPass && <DemoParkingPass reference={reservation.reference} />}
     </section>
   )
 }

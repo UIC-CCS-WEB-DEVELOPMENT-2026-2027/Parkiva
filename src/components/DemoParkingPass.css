@@ -1,0 +1,23 @@
+.demo-parking-pass { margin-top: 20px; padding: 16px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); min-width: 0; overflow-wrap: anywhere; }
+.demo-parking-pass h3 { margin: 0 0 12px; font-size: 18px; }
+.demo-parking-pass p { font-size: 14px; line-height: 1.6; }
+.demo-parking-pass .demo-pass-warning { color: var(--color-primary); font-weight: 600; }
+.demo-parking-pass dl { margin: 16px 0; font-size: 14px; line-height: 1.6; }
+.demo-parking-pass dl div { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr); gap: 8px 16px; padding: 6px 0; }
+.demo-parking-pass dt { color: var(--color-text-muted); }
+.demo-parking-pass dd { margin: 0; }
+.demo-pass-qr { margin: 20px 0; text-align: center; }
+.demo-pass-qr svg { display: block; width: 200px; max-width: 100%; height: auto; margin: 0 auto; background: white; }
+.demo-pass-qr code { font-size: 12px; overflow-wrap: anywhere; }
+.demo-parking-pass label { display: block; margin-bottom: 8px; font-size: 14px; }
+.demo-parking-pass input { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid var(--color-border); border-radius: 4px; font: inherit; font-size: 14px; color: var(--color-text); background: var(--color-surface); }
+.demo-parking-pass button { min-height: 44px; max-width: 100%; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; cursor: pointer; }
+.demo-parking-pass button:hover { background: var(--color-background); }
+.demo-parking-pass button:disabled { opacity: 0.6; cursor: not-allowed; }
+.demo-pass-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.demo-parking-pass .demo-pass-error { color: #a32626; }
+.demo-parking-pass :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
+@media (max-width: 400px) {
+  .demo-parking-pass dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .demo-pass-actions button { flex: 1 1 100%; }
+}
