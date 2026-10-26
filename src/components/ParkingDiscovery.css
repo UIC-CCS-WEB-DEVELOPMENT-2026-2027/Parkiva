@@ -1,205 +1,175 @@
 .parking-discovery {
-  padding: 40px 0 64px;
+  padding: 26px 0 44px;
 }
-.marketplace-intro {
-  display: grid;
-  grid-template-columns: 1fr 1.05fr;
-  gap: 64px;
-  align-items: center;
-  margin-bottom: 32px;
+.discovery-title {
+  margin: 0 0 18px;
 }
-.marketplace-intro h1 {
-  font-size: clamp(42px, 4.8vw, 66px);
-  letter-spacing: -0.055em;
-}
-.marketplace-intro-copy > p:not(.eyebrow) {
-  max-width: 360px;
-  margin: 18px 0 22px;
-  color: var(--color-text-muted);
-  font-size: 15px;
-}
-.marketplace-intro-image {
-  position: relative;
-  height: 290px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.marketplace-intro-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 58%;
-}
-.marketplace-intro-image > span {
-  position: absolute;
-  left: 20px;
-  bottom: 42px;
-  padding: 10px 14px;
-  background: white;
-  color: var(--color-primary);
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.marketplace-intro-image small {
-  position: absolute;
-  bottom: 14px;
-  left: 20px;
-  background: #ffffffed;
-  border-radius: 3px;
-  padding: 3px 6px;
-  font-size: 9px;
+.discovery-title h1 {
+  font-size: clamp(23px, 2.7vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  font-weight: 650;
 }
 .marketplace-search {
-  display: grid;
-  grid-template-columns: minmax(180px, 2fr) minmax(120px, 1fr) minmax(95px, 0.8fr) minmax(
-      95px,
-      0.8fr
-    ) minmax(120px, 1fr) auto;
-  align-items: end;
-  border: 1px solid #cbd7e1;
-  border-radius: 9px;
-  background: white;
-  padding: 14px;
-  gap: 12px;
-  box-shadow: 0 5px 18px #02266408;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.marketplace-search label {
-  font-size: 11px;
-  font-weight: 600;
-  min-width: 0;
-}
-.marketplace-search label > span:first-child {
-  display: inline-flex;
-  gap: 5px;
+.destination-search {
+  display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #c4d1df;
+  border-radius: 6px;
+  padding-left: 15px;
+  background: #fff;
+  box-shadow: 0 2px 5px #02266404;
 }
-.marketplace-search input,
-.marketplace-search select {
-  display: block;
+.destination-search > svg {
+  color: #486886;
+}
+.destination-search input {
   width: 100%;
-  padding: 10px 9px;
-  margin-top: 6px;
-  border-color: #e1e6ea;
-  font-size: 12px;
-}
-.marketplace-search input[type='search'] {
-  padding-inline: 10px;
-}
-.optional {
-  font-size: 9px;
-  color: var(--color-text-muted);
-  font-weight: 400;
+  border: 0;
+  min-height: 52px;
+  outline-offset: -3px;
+  padding: 12px;
+  font-size: 14px;
+  background: transparent;
 }
 .search-submit {
-  align-self: end;
-  white-space: nowrap;
+  min-width: 140px;
+  border-radius: 6px;
 }
-.search-times-toggle.text-button {
-  display: none;
+.search-date-fields {
+  flex: 1 0 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr auto;
+  align-items: end;
+  gap: 12px;
+  margin: 3px 0 0;
+  padding: 16px;
+  border: 1px solid #dce5ec;
+  border-radius: 6px;
+  background: #f8fafc;
+  min-width: 0;
+}
+.search-date-fields legend {
+  padding: 0 4px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.search-date-fields label {
+  display: block;
+  min-width: 0;
+  font-size: 11px;
+  color: #4d6171;
+}
+.search-date-fields label > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.search-date-fields input {
+  width: 100%;
+  font-size: 13px;
 }
 .search-error {
-  grid-column: 1/-1;
+  flex-basis: 100%;
   color: #a32626;
-  font-size: 12px;
   margin: 0;
+  font-size: 12px;
 }
-.neighborhoods {
+.quick-filters {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin: 20px 0 42px;
+  padding: 14px 0;
 }
-.neighborhoods > span {
-  margin-right: 6px;
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
-.neighborhoods button {
-  min-height: 36px;
-  border: 1px solid #e0e7eb;
-  border-radius: 5px;
-  background: white;
-  padding: 6px 13px;
-  color: #496071;
-  font-size: 11px;
-}
-.neighborhoods button:hover,
-.neighborhoods button[aria-pressed='true'] {
-  background: #eef5fb;
-  color: var(--color-primary);
-  border-color: #a8bfd5;
-}
-.discovery-heading {
+.compact-select {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  scroll-margin-top: 24px;
+  min-width: 0;
+  padding: 0 9px;
+  gap: 5px;
+  border: 1px solid #dbe4eb;
+  border-radius: 5px;
+  background: white;
+  color: #597386;
 }
-.discovery-heading .eyebrow {
-  margin-bottom: 8px;
-}
-.discovery-heading h2 {
-  margin: 0;
-  font-size: 26px;
-  letter-spacing: -0.03em;
-  font-weight: 650;
-}
-.parking-result-count {
-  margin: 10px 0 0;
+.compact-select select {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 17px 9px 3px;
+  min-height: 40px;
   font-size: 12px;
-  color: var(--color-text-muted);
+  border: 0;
+  background: transparent;
+  color: #27445d;
+}
+.quick-filters .button {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-color: #dbe4eb;
+  border-radius: 5px;
+}
+.quick-filters .filter-toggle {
+  margin-left: auto;
+}
+.quick-filters button[aria-pressed='true'],
+.quick-filters button[aria-expanded='true'] {
+  background: #eef5fb;
+  border-color: #9ab6d1;
+  color: var(--color-primary);
+}
+.saved-filter > span {
+  font-size: 10px;
+  color: #637b8b;
 }
 .discovery-toolbar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: end;
+  align-items: center;
   gap: 12px;
-  margin: 22px 0 25px;
+  margin: 0 0 18px;
+  padding-top: 12px;
+  border-top: 1px solid #e9eef2;
 }
-.desktop-filters {
-  display: flex;
-  gap: 12px;
+.parking-result-count {
   flex: 1;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #687c89;
 }
-.discovery-toolbar label {
-  display: block;
-  min-width: 0;
-  font-size: 10px;
-  color: var(--color-text-muted);
+.parking-sort {
+  border: 0;
+  padding: 0;
+  max-width: 210px;
 }
-.discovery-toolbar select {
-  display: block;
-  width: 100%;
-  margin-top: 5px;
-  padding: 8px 10px;
+.parking-sort select {
+  min-height: 36px;
   font-size: 11px;
-  border-color: #e1e6ea;
-}
-.saved-filter {
-  padding-inline: 12px;
-  font-size: 11px;
-}
-.saved-filter span {
-  color: #526578;
-  font-size: 10px;
-}
-.saved-filter[aria-pressed='true'] {
-  background: #eef5fb;
-  border-color: #96b2ce;
 }
 .parking-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 5px;
+  min-height: 36px;
+  padding: 5px;
   font-size: 11px;
-}
-.button.filter-toggle {
-  display: none;
+  text-decoration: none;
 }
 .parking-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 30px 24px;
+  align-items: stretch;
+  gap: 28px 22px;
 }
 .parking-card {
   min-width: 0;
@@ -208,9 +178,11 @@
 }
 .listing-card-media {
   position: relative;
-  height: 215px;
-  border-radius: 8px;
+  aspect-ratio: 1.55;
   overflow: hidden;
+  border-radius: 7px;
+  background: #edf2f5;
+  box-shadow: 0 2px 7px #15374b08;
 }
 .listing-photo-button {
   display: block;
@@ -218,55 +190,67 @@
   height: 100%;
   padding: 0;
   border: 0;
-  background: #edf2f5;
+  background: transparent;
   text-align: left;
 }
 .listing-photo-button:hover img {
-  filter: brightness(0.96);
+  filter: brightness(0.95);
 }
-.parking-favorite-save {
+.listing-card-media > .parking-favorite-save {
   position: absolute;
   right: 12px;
   top: 12px;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  min-height: 36px;
-  border: 0;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1px solid #ffffffa8;
   border-radius: 50%;
-  color: #233a4c;
+  color: #26465d;
   background: white;
   box-shadow: 0 2px 5px #14232e15;
 }
-.parking-favorite-save[aria-pressed='true'] {
-  color: #ba394a;
+.listing-card-media > .parking-favorite-save:hover {
+  background: #f2f7fb;
+}
+.listing-card-media > .parking-favorite-save[aria-pressed='true'] {
+  color: #b63c54;
 }
 .listing-category {
   position: absolute;
   left: 12px;
   top: 14px;
-  max-width: calc(100% - 70px);
+  max-width: calc(100% - 78px);
   padding: 5px 8px;
   border-radius: 3px;
   color: #213e50;
   background: #fffffff5;
   font-size: 10px;
+  line-height: 1.5;
+  pointer-events: none;
 }
 .parking-card-content {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  padding: 15px 1px 0;
+  flex: 1;
+  padding: 13px 1px 0;
 }
 .listing-card-location {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 8px;
-  font-size: 10px;
-  color: #60727e;
+  font-size: 11px;
+  color: #607783;
+}
+.listing-card-location > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .availability {
   display: inline-flex;
@@ -292,8 +276,9 @@
 .parking-card h2 {
   margin: 0;
   font-size: 17px;
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -0.025em;
+  font-weight: 650;
 }
 .parking-card h2 button {
   min-height: 0;
@@ -309,15 +294,16 @@
   text-underline-offset: 3px;
 }
 .listing-host {
-  margin: 7px 0 12px;
-  color: #6b7983;
+  margin: 7px 0 11px;
+  color: #73818b;
   font-size: 11px;
+  line-height: 1.5;
 }
 .listing-amenities {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 14px;
-  padding-bottom: 13px;
+  padding-bottom: 12px;
   font-size: 11px;
   color: #526978;
 }
@@ -331,9 +317,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-top: 1px solid #e7ecef;
   padding-top: 12px;
   margin-top: auto;
+  border-top: 1px solid #edf0f3;
 }
 .listing-card-bottom p {
   margin: 0;
@@ -343,6 +329,7 @@
 .listing-card-bottom strong {
   font-size: 18px;
   color: var(--color-primary);
+  font-weight: 650;
 }
 .listing-card-bottom p > span {
   font-size: 11px;
@@ -351,7 +338,7 @@
 .listing-card-bottom small {
   display: block;
   margin-top: 4px;
-  color: #697984;
+  color: #72818d;
   font-size: 9px;
 }
 .parking-details-button {
@@ -359,11 +346,11 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 40px;
+  padding: 8px 11px;
   background: #f0f5fa;
   color: var(--color-primary);
-  border: 1px solid #dee8f1;
+  border: 1px solid #e2eaf1;
   border-radius: 5px;
   font-size: 11px;
   font-weight: 600;
@@ -375,10 +362,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48px 20px;
-  background: #f7f9fb;
+  padding: 40px 20px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 6px;
+  background: #fafcfd;
   text-align: center;
 }
 .parking-empty h3 {
@@ -390,80 +377,11 @@
   font-size: 14px;
   color: var(--color-text-muted);
 }
-.marketplace-recommendations {
-  margin-top: 54px;
-  padding-top: 32px;
-  border-top: 1px solid var(--color-border);
-}
-.section-title {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 20px;
-}
-.section-title h2,
-.hosting-callout h2 {
-  margin: 0;
-  font-size: 25px;
-}
-.section-title > p {
-  max-width: 290px;
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 12px;
-}
-.recommended-links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  margin-top: 24px;
-}
-.recommended-links button {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 0;
-  background: white;
-  border: 0;
-  text-align: left;
-  color: var(--color-primary);
-}
-.recommended-links strong {
-  font-size: 13px;
-  line-height: 1.4;
-  display: block;
-  font-weight: 600;
-}
-.recommended-links small {
-  display: block;
-  margin-top: 5px;
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
-.recommended-links button > svg {
-  margin-left: auto;
-  width: 16px;
-}
-.hosting-callout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 25px;
-  margin-top: 44px;
-  padding: 28px 32px;
-  border-radius: 8px;
-  background: #edf4f7;
-}
-.hosting-callout p:last-child {
-  margin: 10px 0 0;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
 .filter-dialog {
-  width: min(480px, calc(100% - 24px));
+  width: min(440px, calc(100% - 24px));
   max-height: calc(100dvh - 24px);
   border: 0;
-  border-radius: 12px;
+  border-radius: 9px;
   padding: 0;
   color: var(--color-text);
 }
@@ -507,189 +425,118 @@
   padding-top: 20px;
   margin-top: 20px;
 }
-@media (min-width: 1450px) {
-  .listing-card-media {
-    height: 240px;
+@media (min-width: 1400px) {
+  .parking-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 20px;
   }
-}
-@media (max-width: 1100px) {
-  .marketplace-search {
-    grid-template-columns: minmax(180px, 2fr) repeat(2, 1fr);
-  }
-  .marketplace-intro {
-    gap: 35px;
-  }
-  .marketplace-intro-image {
-    height: 270px;
-  }
-  .desktop-filters {
-    flex-basis: 100%;
-  }
-  .desktop-filters label {
-    flex: 1;
-  }
-  .parking-sort {
-    flex: 1;
-  }
-  .listing-card-media {
-    height: 185px;
+  .parking-card h2 {
+    font-size: 16px;
   }
 }
 @media (max-width: 900px) {
   .parking-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .listing-card-media {
-    height: 225px;
+  .search-date-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .recommended-links {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-  .recommended-links button {
-    border-bottom: 1px solid var(--color-border);
-  }
-  .marketplace-intro h1 {
-    font-size: 48px;
-  }
-  .marketplace-intro-image {
-    height: 260px;
+  .search-date-fields button {
+    grid-column: 1/-1;
   }
 }
 @media (max-width: 600px) {
   .parking-discovery {
-    padding-top: 20px;
-    padding-bottom: 36px;
+    padding: 20px 0 30px;
   }
-  .marketplace-intro {
-    grid-template-columns: 1fr;
-    gap: 22px;
-    margin-bottom: 18px;
+  .discovery-title {
+    margin-bottom: 14px;
   }
-  .marketplace-intro h1 {
-    font-size: 38px;
-  }
-  .marketplace-intro-copy .eyebrow {
-    display: none;
-    font-size: 9px;
-    margin-bottom: 12px;
-  }
-  .marketplace-intro-copy > p:not(.eyebrow) {
-    max-width: 330px;
-    margin: 14px 0 0;
-    font-size: 13px;
-  }
-  .marketplace-intro-copy .text-link {
-    display: none;
-  }
-  .marketplace-intro-image {
-    display: none;
-  }
-  .marketplace-intro-image > span {
-    left: 12px;
-    bottom: 32px;
-    padding: 6px 9px;
-    font-size: 11px;
-  }
-  .marketplace-intro-image small {
-    bottom: 10px;
-    left: 12px;
-    font-size: 8px;
+  .discovery-title h1 {
+    max-width: 320px;
+    font-size: 23px;
   }
   .marketplace-search {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    padding: 14px;
-    box-shadow: none;
   }
   .destination-search {
-    grid-column: 1/-1;
+    padding-left: 11px;
   }
-  .marketplace-search .search-time-field {
-    display: none;
-  }
-  .marketplace-search.show-times .search-time-field {
-    display: block;
-  }
-  .search-times-toggle.text-button {
-    display: block;
-    grid-column: 1/-1;
-    min-height: 30px;
-    font-size: 11px;
-    padding: 0;
-    text-align: left;
-  }
-  .search-times-toggle span {
-    color: var(--color-text-muted);
-    font-size: 10px;
-    text-decoration: none;
-  }
-  .marketplace-search label:nth-child(2) {
-    grid-column: 1/-1;
-  }
-  .marketplace-search input,
-  .marketplace-search select {
-    font-size: 13px;
-    padding-inline: 8px;
+  .destination-search input {
+    min-height: 48px;
+    padding: 10px 9px;
+    font-size: 12px;
   }
   .search-submit {
-    font-size: 12px;
-    padding-inline: 6px;
+    min-width: 48px;
+    width: 48px;
+    padding: 10px;
   }
-  .neighborhoods {
-    margin: 18px 0 22px;
-    gap: 6px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .neighborhoods > span {
+  .search-submit > span {
     display: none;
   }
-  .neighborhoods button {
-    flex: 0 0 auto;
-    font-size: 10px;
-    padding-inline: 10px;
+  .quick-filters {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 7px;
+    padding: 12px 0;
   }
-  .discovery-heading h2 {
-    font-size: 22px;
+  .quick-filters > .compact-select {
+    grid-column: span 3;
+    width: auto;
+  }
+  .compact-select {
+    padding-inline: 7px;
+    gap: 3px;
+  }
+  .compact-select select {
+    padding-right: 12px;
+    font-size: 11px;
+    min-height: 40px;
+  }
+  .quick-filters .button {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  .quick-filters .filter-toggle {
+    margin-left: 0;
+  }
+  .quick-filters > .filter-toggle,
+  .quick-filters > .search-times-toggle,
+  .quick-filters > .saved-filter {
+    grid-column: span 2;
+  }
+  .discovery-toolbar {
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-top: 9px;
   }
   .parking-result-count {
     font-size: 10px;
-    line-height: 1.7;
-  }
-  .discovery-heading .eyebrow {
-    font-size: 8px;
-  }
-  .button.filter-toggle {
-    display: inline-flex;
-    padding-inline: 10px;
-    font-size: 11px;
-  }
-  .desktop-filters {
-    display: none;
-  }
-  .discovery-toolbar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: 8px;
-    margin: 12px 0 16px;
+    white-space: nowrap;
   }
   .parking-sort {
-    max-width: none;
+    flex: 0 0 140px;
+    max-width: 140px;
+    gap: 3px;
+  }
+  .parking-sort select {
+    padding-left: 0;
+    font-size: 10px;
   }
   .parking-reset {
-    min-height: 32px;
+    width: 30px;
+    padding: 0;
   }
-  .saved-filter {
-    padding-inline: 9px;
+  .parking-reset > span {
+    display: none;
   }
   .parking-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
   }
   .listing-card-media {
-    height: 220px;
+    aspect-ratio: 1.6;
   }
   .parking-card h2 {
     font-size: 18px;
@@ -697,34 +544,15 @@
   .listing-host {
     font-size: 11px;
   }
-  .section-title {
-    display: block;
+  .search-date-fields {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px;
+    gap: 10px;
   }
-  .section-title > p {
-    margin-top: 12px;
-  }
-  .section-title h2,
-  .hosting-callout h2 {
-    font-size: 22px;
-  }
-  .hosting-callout {
-    align-items: start;
-    flex-direction: column;
-    margin-top: 28px;
-    padding: 24px 20px;
+  .search-date-fields label:first-of-type {
+    grid-column: 1/-1;
   }
   .filter-dialog {
     margin: auto auto 12px;
-  }
-}
-@media (max-width: 350px) {
-  .marketplace-intro h1 {
-    font-size: 35px;
-  }
-  .listing-card-media {
-    height: 195px;
-  }
-  .parking-details-button {
-    padding-inline: 10px;
   }
 }

@@ -5,7 +5,7 @@ import ParkingLocationVisual from './ParkingLocationVisual'
 import Icon from './Icon'
 import './DriverDashboard.css'
 
-export default function DriverDashboard({ onBrowse, onSaved }) {
+export default function DriverDashboard({ onBrowse, onSaved, onViewPass, onListingOpen }) {
   const { areas, ownRecords, loaded, listingError } = useMockParking()
   const { savedIds, toggleSaved } = useParkingFavorites(areas, { ready: loaded && !listingError })
   const favorites = areas.filter((area) => savedIds.includes(area.id))
@@ -26,16 +26,6 @@ export default function DriverDashboard({ onBrowse, onSaved }) {
           Find a spot
           <Icon name="arrow" size={18} />
         </button>
-      </div>
-      <div className="driver-welcome">
-        <Icon name="car" size={26} />
-        <div>
-          <h2>Ready for wherever the day takes you.</h2>
-          <p>
-            You’re using the Driver demo account. Reservations are local to this browser, with no
-            real booking or payment.
-          </p>
-        </div>
       </div>
       <div className="section-title">
         <h2>Your saved spots</h2>
@@ -64,7 +54,7 @@ export default function DriverDashboard({ onBrowse, onSaved }) {
                 <button className="text-button" onClick={() => toggleSaved(area.id)}>
                   Unsave<span className="parking-sr-only"> {area.name}</span>
                 </button>
-                <button className="text-button" onClick={onSaved}>
+                <button className="text-button" onClick={() => onListingOpen(area.id)}>
                   View saved spot
                   <Icon name="arrow" size={14} />
                 </button>
@@ -86,7 +76,7 @@ export default function DriverDashboard({ onBrowse, onSaved }) {
           <p>Vehicle details appear after your first reservation.</p>
         )}
       </details>
-      <ReservationHistory onBrowse={onBrowse} embedded />
+      <ReservationHistory onBrowse={onBrowse} onViewPass={onViewPass} embedded />
     </section>
   )
 }

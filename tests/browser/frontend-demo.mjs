@@ -26,17 +26,17 @@ try {
     await button(page, 'My Reservations').click()
     await page.getByText('Your next visit starts with a spot.', { exact: true }).waitFor()
     await button(page, 'Browse parking').click()
-    await page.getByRole('searchbox').fill('  Airport Road  ')
+    await page.locator('input[type="search"]').fill('  Airport Road  ')
     assert.equal(await page.locator('.parking-card').count(), 1)
-    await page.getByRole('searchbox').fill('does-not-exist')
+    await page.locator('input[type="search"]').fill('does-not-exist')
     await page.locator('.parking-empty').waitFor()
     await button(page, 'Reset Filters').first().click()
     await page.getByLabel('Vehicle type', { exact: true }).selectOption('Car')
     assert.equal(await page.locator('.parking-card').count(), 10)
-    if (width <= 600) await button(page, 'Filters').click()
-    const filter = width <= 600 ? page.getByRole('dialog') : page.locator('.desktop-filters')
+    await button(page, 'Filters').click()
+    const filter = page.getByRole('dialog')
     await filter.getByLabel('Availability', { exact: true }).selectOption('Full')
-    if (width <= 600) await page.keyboard.press('Escape')
+    await page.keyboard.press('Escape')
     await page.locator('.parking-empty').waitFor()
     await button(page, 'Reset Filters').first().click()
     await page.getByLabel('Sort By', { exact: true }).selectOption('name-asc')
@@ -69,6 +69,7 @@ try {
     }
     await fit(page, width)
     await page.keyboard.press('Escape')
+    await page.getByRole('dialog').waitFor({ state: 'hidden' })
     assert.ok(await trigger.evaluate((node) => node === document.activeElement))
     assert.equal(await page.evaluate(() => document.body.style.overflow), '')
     await openDetails(page)
@@ -138,7 +139,7 @@ try {
       .getByRole('heading', { name: 'Demo reservation confirmation', exact: true })
       .waitFor()
     const ref = await reference(page)
-    await button(page, 'View demo pass').click()
+    await button(page, 'View QR pass').click()
     await page
       .getByRole('img', { name: 'QR code containing only the demo pass reference' })
       .waitFor()
@@ -154,14 +155,14 @@ try {
     const card = page.locator('.reservation-history-card')
     await card.waitFor()
     await card.getByRole('button', { name: /^View details/ }).click()
-    await card.getByRole('button', { name: /^Cancel demo reservation/ }).click()
+    await card.getByRole('button', { name: /^Cancel reservation/ }).click()
     await button(page, 'Keep reservation').waitFor()
     assert.equal(
       await button(page, 'Keep reservation').evaluate((node) => node === document.activeElement),
       true,
     )
     await page.keyboard.press('Escape')
-    await card.getByRole('button', { name: /^Cancel demo reservation/ }).click()
+    await card.getByRole('button', { name: /^Cancel reservation/ }).click()
     await button(page, 'Confirm cancellation').click()
     await page.getByRole('status').filter({ hasText: 'cancelled.' }).waitFor()
     await page.reload()
@@ -172,7 +173,7 @@ try {
     await page.locator('.history-tabs button').filter({ hasText: 'Cancelled' }).click()
     await page
       .locator('.reservation-history-card')
-      .getByRole('button', { name: /^View demo pass/ })
+      .getByRole('button', { name: /^View parking pass/ })
       .click()
     assert.equal(
       await page
@@ -182,6 +183,7 @@ try {
     )
     await fit(page, width)
     await page.evaluate(() => localStorage.setItem('parkiva-demo-reservations-v1', '{broken'))
+    await button(page, 'My Reservations').click()
     await button(page, 'Refresh reservations').click()
     await page.getByRole('alert').filter({ hasText: 'could not be read' }).waitFor()
     assert.equal(

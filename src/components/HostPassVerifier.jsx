@@ -168,7 +168,7 @@ export default function HostPassVerifier() {
             />
             {!camera && (
               <>
-                <Icon name="qr" size={48} />
+                <Icon name="scan" size={48} />
                 <p>Scan a driver’s Parkiva pass</p>
                 <small>Camera opens only when you choose to start it.</small>
               </>

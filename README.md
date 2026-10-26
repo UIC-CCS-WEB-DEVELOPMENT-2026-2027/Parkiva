@@ -59,16 +59,16 @@ tracked using GitHub Issues and GitHub Projects.
 
 ## Implemented Marketplace Experience
 
-- Guest-first discovery with neighborhood shortcuts, location and visit-time search, vehicle, covered/open-air, illustrative price and availability filters, sorting, and saved listings.
+- Listing-first guest discovery with compact location and optional visit-time search, vehicle, covered/open-air, illustrative price and availability filters, sorting, and saved listings.
 - Eight researched real Davao locations plus three clearly fictional private/independent spaces. Host-created fictional listings appear in public discovery in the same browser.
 - Licensed local representative parking photos, gallery controls, photographer credits, and an original illustration if an image cannot load. These photos do not claim to show a listed facility.
 - Rich listing details with factual source links, host context, preview rates/amenities/hours, entrance information, rules, Maps links and a four-step reservation panel.
-- Available-only bay selection, date/time and vehicle validation, editable review, retained drafts while navigating, unique preview references, and no payment step.
+- Available-only bay selection, date/time and vehicle validation, editable review, account-scoped tab drafts retained through navigation, refresh and sign-in, unique preview references, and no payment step.
 - My Reservations with upcoming/active/past/cancelled filters, vehicle details, QR passes, and confirmation before cancelling an upcoming visit.
 - A driver home with preloaded favorites, vehicle information and reservation history.
 - A host workspace with assigned training inventory and fictional properties, add/edit forms, safe local persistence, illustrative prices/hours, and Available/Reserved/Occupied/Unavailable bay management.
 - Host QR lookup by camera on supported browsers or manual reference entry. Scheduled entry, late exit, duplicate-use prevention and occupancy release are simulated against the original reservation record.
-- Two public role accounts with quick-fill, field validation, password visibility, login/logout, browser history navigation and identifier-only sessions. Registration demonstrates the interface without creating accounts.
+- Separate compact driver and host sign-in forms with collapsible sample credentials, field validation, password visibility, login/logout, browser history navigation and identifier-only sessions. Registration demonstrates the interface without creating accounts.
 
 Personal favorites and reservation histories retain separate guest/driver/operator keys. Effective inventory and conflict checks now consider all three workspaces in this browser, so a host can verify a driver's pass without copying that reservation into its own history. Pass updates are written back to the original workspace. Assigned real venues remain fictional training assignments, never claimed business ownership.
 
@@ -84,6 +84,8 @@ Existing guest data, researched IDs and historical reservation snapshots are ret
 The driver workspace starts with saved real Davao locations and upcoming, past, and cancelled mock reservations. The host workspace starts with mock occupancy and training assignments for Aldevinco Pay Parking, SM City Davao Parking, and SM Lanang Premier Parking, plus fictional private/independent listings. The operator account does **not** own or manage those facilities in the real world. Public discovery remains available without login. Seed data is added only when an account's storage is absent, so subsequent logins do not reset edits or cancellations.
 
 Only the demo account identifier is stored as session data. These public credentials and frontend role checks are visible and editable in the browser; they provide no security or real staff authorization. Use no real credentials.
+
+Public navigation starts at Explore, with Saved and My Reservations always within reach. List your space opens a dedicated host introduction and host sign-in. Listing and pass links support browser Back/Forward and refresh; a selected guest reservation draft follows driver sign-in. Drafts remain in the current tab via sessionStorage with an in-memory fallback. Confirmed reservations remain local to this browser and are not securely account-linked. [Navigation and QA notes](docs/marketplace-navigation-qa.md) describe the tested journeys.
 
 ## How Parkiva Works
 
@@ -125,4 +127,4 @@ Names, location evidence, research date, and public sources are recorded with ea
 
 No authorized location-specific photo integration is configured. Licensed, locally served Pexels photos are explicitly representative; see [photo sources and license](public/images/ATTRIBUTION.md). No Google Maps images are copied, no private keys are exposed, and runtime browsing makes no remote image requests. Hosts may choose a JPG/PNG/WebP up to 2 MB for the current tab only; uploads are never stored in localStorage and disappear on refresh or logout.
 
-Retired fictional favorite IDs are removed instead of being assigned to real facilities. Earlier reservation snapshots retain their original location identity. [Design research](docs/marketplace-design-research.md) documents the references and frontend limitations. The persistent marketplace-preview notice and contextual confirmation/login/verification disclosures keep the simulation clear without repeating banners on every card.
+Retired fictional favorite IDs are removed instead of being assigned to real facilities. Earlier reservation snapshots retain their original location identity. [Design research](docs/marketplace-design-research.md) documents the references and frontend limitations. The footer disclosure and contextual confirmation/login/verification disclosures keep the simulation clear without repeating banners on every card.

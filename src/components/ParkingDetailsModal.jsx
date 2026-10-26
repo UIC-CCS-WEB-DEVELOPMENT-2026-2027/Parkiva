@@ -14,6 +14,9 @@ export default function ParkingDetailsModal({
   onDraftChange,
   saved,
   onSave,
+  onSignIn,
+  onReservations,
+  onViewPass,
 }) {
   const { slotsByFacility, slotError, reservationError } = useMockParking()
   const dialogRef = useRef(null)
@@ -61,6 +64,12 @@ export default function ParkingDetailsModal({
           {area.neighborhood} · Davao City
         </span>
         <div>
+          {onSignIn && (
+            <button className="button" onClick={onSignIn}>
+              <Icon name="user" size={16} />
+              Sign in
+            </button>
+          )}
           <button className="button details-save" onClick={onSave} aria-pressed={saved}>
             <Icon name="heart" size={16} />
             {saved ? 'Saved' : 'Save'}
@@ -218,6 +227,8 @@ export default function ParkingDetailsModal({
               draft={reservationDraft}
               onDraftChange={onDraftChange}
               onChooseParking={onClose}
+              onReservations={onReservations}
+              onViewPass={onViewPass}
             />
           </aside>
         </div>

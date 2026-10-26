@@ -9,6 +9,9 @@
   width: calc(100% - 80px);
   margin-inline: auto;
 }
+.footer-bottom span:last-child {
+  max-width: 480px;
+}
 .footer-content {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;

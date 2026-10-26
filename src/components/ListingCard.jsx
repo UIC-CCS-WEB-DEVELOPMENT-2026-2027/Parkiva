@@ -17,6 +17,7 @@ export default function ListingCard({ area, saved, onSave, onOpen }) {
           className="parking-favorite-save"
           type="button"
           aria-label={`${saved ? 'Unsave' : 'Save'} ${area.name}`}
+          title={saved ? 'Remove from saved' : 'Save parking'}
           aria-pressed={saved}
           onClick={() => onSave(area.id)}
         >
@@ -28,8 +29,14 @@ export default function ListingCard({ area, saved, onSave, onOpen }) {
       </div>
       <div className="parking-card-content">
         <div className="listing-card-location">
-          <span>{area.neighborhood} · Davao City</span>
-          <span className={`availability availability--${area.availability.toLowerCase()}`}>
+          <span>
+            <Icon name="pin" size={13} />
+            {area.neighborhood} · Davao City
+          </span>
+          <span
+            className={`availability availability--${area.availability.toLowerCase()}`}
+            title={'Simulated availability: ' + area.availability}
+          >
             {area.availability}
           </span>
         </div>
@@ -40,7 +47,7 @@ export default function ListingCard({ area, saved, onSave, onOpen }) {
         </h2>
         <p className="listing-host">
           {area.verifiedLocation
-            ? 'Researched location · preview inventory'
+            ? 'Location guide · no host partnership'
             : `Hosted by ${area.hostName} · fictional host`}
         </p>
         <div className="listing-amenities">
@@ -57,7 +64,7 @@ export default function ListingCard({ area, saved, onSave, onOpen }) {
           <p>
             <strong>{pesos(area.hourlyRate)}</strong>
             <span> / hour</span>
-            <small>Illustrative rate</small>
+            <small>Sample rate</small>
           </p>
           <button
             className="parking-details-button"

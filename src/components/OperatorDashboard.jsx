@@ -11,7 +11,7 @@ import HostPassVerifier from './HostPassVerifier'
 import Icon from './Icon'
 import './OperatorDashboard.css'
 
-export default function OperatorDashboard({ onBrowse, onLogin }) {
+export default function OperatorDashboard({ onBrowse, onLogin, active = true }) {
   const { account } = useDemoAccount()
   const {
     areas: allAreas,
@@ -129,38 +129,40 @@ export default function OperatorDashboard({ onBrowse, onLogin }) {
           {slotError} {reservationError} {listingError}
         </div>
       )}
-      <div className="host-statistics">
-        <div>
-          <span>Spaces in your preview</span>
-          <strong>{totalSlots}</strong>
-          <small>Across {areas.length} listings</small>
+      {tab === 'overview' && (
+        <div className="host-statistics">
+          <div>
+            <span>Spaces in your preview</span>
+            <strong>{totalSlots}</strong>
+            <small>Across {areas.length} listings</small>
+          </div>
+          <div>
+            <span>Available now</span>
+            <strong>{totals.Available}</strong>
+            <small>Illustrative bays</small>
+          </div>
+          <div>
+            <span>Occupied</span>
+            <strong>{totals.Occupied}</strong>
+            <small>
+              {totalSlots ? Math.round((totals.Occupied / totalSlots) * 100) : 0}% occupancy
+            </small>
+          </div>
+          <div>
+            <span>Incoming & active visits</span>
+            <strong>
+              {
+                assigned.filter((record) =>
+                  ['Upcoming', 'In progress', 'Checked in'].includes(
+                    demoReservationStatus(record, now),
+                  ),
+                ).length
+              }
+            </strong>
+            <small>Same-browser records</small>
+          </div>
         </div>
-        <div>
-          <span>Available now</span>
-          <strong>{totals.Available}</strong>
-          <small>Illustrative bays</small>
-        </div>
-        <div>
-          <span>Occupied</span>
-          <strong>{totals.Occupied}</strong>
-          <small>
-            {totalSlots ? Math.round((totals.Occupied / totalSlots) * 100) : 0}% occupancy
-          </small>
-        </div>
-        <div>
-          <span>Incoming & active visits</span>
-          <strong>
-            {
-              assigned.filter((record) =>
-                ['Upcoming', 'In progress', 'Checked in'].includes(
-                  demoReservationStatus(record, now),
-                ),
-              ).length
-            }
-          </strong>
-          <small>Same-browser records</small>
-        </div>
-      </div>
+      )}
       <div className="workspace-tabs" role="group" aria-label="Host workspace views">
         {[
           ['overview', 'Overview'],
@@ -170,7 +172,19 @@ export default function OperatorDashboard({ onBrowse, onLogin }) {
           ...(operator ? [['verification', 'Verify a pass']] : []),
         ].map(([id, label]) => (
           <button key={id} aria-pressed={tab === id} onClick={() => setTab(id)}>
-            {id === 'verification' && <Icon name="qr" size={17} />} {label}
+            <Icon
+              name={
+                {
+                  overview: 'roof',
+                  listings: 'pin',
+                  slots: 'car',
+                  reservations: 'calendar',
+                  verification: 'scan',
+                }[id]
+              }
+              size={17}
+            />{' '}
+            {label}
           </button>
         ))}
       </div>
@@ -293,6 +307,7 @@ export default function OperatorDashboard({ onBrowse, onLogin }) {
                         disabled={!operator || Boolean(listingError)}
                         onClick={() => startEdit(area)}
                       >
+                        <Icon name="edit" size={15} />
                         Edit listing<span className="parking-sr-only"> {area.name}</span>
                       </button>
                       <button
@@ -456,7 +471,7 @@ export default function OperatorDashboard({ onBrowse, onLogin }) {
           )}
         </>
       )}
-      {tab === 'verification' && operator && <HostPassVerifier />}
+      {tab === 'verification' && operator && active && <HostPassVerifier />}
       <p role="status" className="host-feedback">
         {saving ? 'Saving status?' : message}
       </p>

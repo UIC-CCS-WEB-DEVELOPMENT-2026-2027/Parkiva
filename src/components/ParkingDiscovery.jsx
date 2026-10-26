@@ -20,11 +20,22 @@ const defaults = {
   sortBy: 'default',
   savedOnly: false,
 }
-export default function ParkingDiscovery({ savedView = false, active = true, onHost, onShowAll }) {
+export default function ParkingDiscovery({
+  savedView = false,
+  active = true,
+  onShowAll,
+  listingId,
+  onListingOpen,
+  onListingClose,
+  drafts = {},
+  onDraftChange,
+  onReservations,
+  onViewPass,
+  onSignIn,
+}) {
   const { areas, records, slotsByFacility, listingError, loaded } = useMockParking()
   const [filters, setFilters] = useState(defaults)
-  const [selectedId, setSelectedId] = useState(null)
-  const [drafts, setDrafts] = useState({})
+  const selectedId = listingId
   const [timing, setTiming] = useState({ date: '', arrival: '', departure: '' })
   const [timeErrors, setTimeErrors] = useState({})
   const [datesApplied, setDatesApplied] = useState(false)
@@ -35,7 +46,6 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
   const filterTrigger = useRef(null)
   useEffect(() => {
     if (!active) {
-      setSelectedId(null)
       setFiltersOpen(false)
     }
   }, [active])
@@ -72,17 +82,11 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
         }),
     )
   })
-  const featured =
-    !Object.entries(filters).some(([key, value]) => key !== 'sortBy' && Boolean(value)) &&
-    !datesApplied
   const selectedArea = areas.find((area) => area.id === selectedId)
   function open(area) {
     if (datesApplied && !drafts[area.id])
-      setDrafts((previous) => ({
-        ...previous,
-        [area.id]: { ...createReservationDraft(), dateTime: { ...timing } },
-      }))
-    setSelectedId(area.id)
+      onDraftChange(area.id, { ...createReservationDraft(), dateTime: { ...timing } })
+    onListingOpen(area.id)
   }
   function reset() {
     setFilters({ ...defaults, savedOnly: savedView })
@@ -101,6 +105,7 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
       .getElementById('listing-results')
       ?.scrollIntoView({ block: 'start', behavior: 'instant' })
   }
+
   const filterControls = (
     <>
       <label>
@@ -114,18 +119,6 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
           <option>Available</option>
           <option>Limited</option>
           <option>Full</option>
-        </select>
-      </label>
-      <label>
-        Parking type
-        <select
-          aria-label="Parking type"
-          value={filters.parkingType}
-          onChange={(e) => field('parkingType', e.target.value)}
-        >
-          <option value="">Covered & open-air</option>
-          <option>Covered</option>
-          <option>Open-air</option>
         </select>
       </label>
       <label>
@@ -145,204 +138,169 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
   )
   return (
     <section className="parking-discovery" aria-labelledby="parking-heading">
-      <div className="marketplace-intro">
-        <div className="marketplace-intro-copy">
-          <p className="eyebrow">
-            <Icon name="pin" size={15} /> DAVAO CITY, PHILIPPINES
-          </p>
-          <h1 id="parking-heading" tabIndex={-1}>
-            {savedView ? (
-              'Your saved spots.'
-            ) : (
-              <>
-                Find your spot
-                <br />
-                in Davao.
-              </>
-            )}
-          </h1>
-          <p>
-            From a quick errand to a full day out. Explore parking around the places you’re headed.
-          </p>
-          <a href="#listing-results" className="text-link">
-            Explore parking <Icon name="arrow" size={17} />
-          </a>
-        </div>
-        <div className="marketplace-intro-image">
-          <img
-            src="/images/parking-aerial.jpg"
-            width="1200"
-            height="800"
-            alt="Representative aerial parking photograph, not a Davao facility"
-            fetchPriority="high"
-          />
-          <span>More time for where you’re going.</span>
-          <small>Representative photography · Erik Mclean / Pexels</small>
-        </div>
-      </div>
+      <header className="discovery-title">
+        <h1 id="parking-heading" tabIndex={-1}>
+          {savedView ? 'Your saved parking spots.' : 'Find your parking spot in Davao.'}
+        </h1>
+      </header>
       <form
-        className={'marketplace-search' + (datesExpanded ? ' show-times' : '')}
+        id="parking-search"
+        className="marketplace-search"
         role="search"
         aria-label="Search parking"
         noValidate
         onSubmit={search}
       >
         <label className="destination-search">
-          <span>
-            <Icon name="pin" size={16} /> Where are you headed?
-          </span>
+          <Icon name="search" size={20} />
+          <span className="parking-sr-only">Search parking</span>
           <input
             type="search"
-            placeholder="Place, neighborhood or parking name"
+            placeholder="Search Davao parking"
+            aria-label="Search parking"
+            list="davao-neighborhoods"
             value={filters.search}
             onChange={(e) => field('search', e.target.value)}
           />
         </label>
-        <label className="search-time-field" id="search-date-field">
-          Date <span className="optional">optional</span>
-          <input
-            type="date"
-            aria-label="Search date"
-            value={timing.date}
-            onChange={(e) => {
-              setDatesApplied(false)
-              setTiming({ ...timing, date: e.target.value })
-            }}
-            aria-invalid={Boolean(timeErrors.date)}
-          />
-        </label>
-        <label className="search-time-field" id="search-arrival-field">
-          Arrive
-          <input
-            type="time"
-            aria-label="Search arrival time"
-            value={timing.arrival}
-            onChange={(e) => {
-              setDatesApplied(false)
-              setTiming({ ...timing, arrival: e.target.value })
-            }}
-            aria-invalid={Boolean(timeErrors.arrival)}
-          />
-        </label>
-        <label className="search-time-field" id="search-departure-field">
-          Leave
-          <input
-            type="time"
-            aria-label="Search departure time"
-            value={timing.departure}
-            onChange={(e) => {
-              setDatesApplied(false)
-              setTiming({ ...timing, departure: e.target.value })
-            }}
-            aria-invalid={Boolean(timeErrors.departure)}
-          />
-        </label>
-        <label>
-          Vehicle type
-          <select
-            aria-label="Vehicle type"
-            value={filters.vehicle}
-            onChange={(e) => field('vehicle', e.target.value)}
-          >
-            <option value="">All vehicles</option>
-            <option>Car</option>
-            <option>Motorcycle</option>
-          </select>
-        </label>
-        <button className="button primary search-submit" type="submit">
-          <Icon name="search" size={18} />
-          Find parking
-        </button>
+        <datalist id="davao-neighborhoods">
+          {NEIGHBORHOODS.map((area) => (
+            <option key={area} value={area} />
+          ))}
+        </datalist>
         <button
-          className="search-times-toggle text-button"
-          type="button"
-          aria-expanded={datesExpanded}
-          aria-controls="search-date-field search-arrival-field search-departure-field"
-          onClick={() => setDatesExpanded(!datesExpanded)}
+          className="button primary search-submit"
+          type="submit"
+          aria-label="Find parking"
+          title="Find parking"
         >
-          {datesExpanded ? 'Hide visit times' : 'Add visit times'}
-          <span> · optional</span>
+          <span>Find parking</span>
+          <Icon name="arrow" size={19} />
         </button>
+        {datesExpanded && (
+          <fieldset className="search-date-fields" id="search-visit-times">
+            <legend>Plan your visit</legend>
+            {[
+              ['date', 'Search date', 'calendar'],
+              ['arrival', 'Search arrival time', 'clock'],
+              ['departure', 'Search departure time', 'clock'],
+            ].map(([key, label, icon]) => (
+              <label key={key}>
+                <span>
+                  <Icon name={icon} size={15} />
+                  {key === 'date' ? 'Date' : key === 'arrival' ? 'Arrive' : 'Leave'}
+                </span>
+                <input
+                  type={key === 'date' ? 'date' : 'time'}
+                  aria-label={label}
+                  value={timing[key]}
+                  onChange={(e) => {
+                    setDatesApplied(false)
+                    setTiming({ ...timing, [key]: e.target.value })
+                  }}
+                  aria-invalid={Boolean(timeErrors[key])}
+                />
+              </label>
+            ))}
+            <button className="button primary" type="submit">
+              Apply times
+            </button>
+          </fieldset>
+        )}
         {Object.keys(timeErrors).length > 0 && (
           <p className="search-error" role="alert">
             {Object.values(timeErrors).join(' ')}
           </p>
         )}
       </form>
-      <nav className="neighborhoods" aria-label="Popular Davao areas">
-        <span>Explore by area</span>
-        {NEIGHBORHOODS.slice(0, 6).map((area) => (
-          <button
-            key={area}
-            type="button"
-            aria-pressed={filters.search === area}
-            onClick={() => field('search', filters.search === area ? '' : area)}
-          >
-            {area}
-          </button>
-        ))}
-      </nav>
-      <div className="discovery-heading" id="listing-results">
-        <div>
-          <p className="eyebrow">
-            {savedView || filters.savedOnly
-              ? 'YOUR SHORTLIST'
-              : featured
-                ? 'A GOOD PLACE TO START'
-                : 'FIND THE RIGHT FIT'}
-          </p>
-          <h2>
-            {savedView || filters.savedOnly
-              ? 'Saved parking'
-              : featured
-                ? 'Parking around Davao'
-                : 'Explore parking'}
-          </h2>
-          <p className="parking-result-count" role="status">
-            {results.length} {results.length === 1 ? 'parking area' : 'parking areas'} shown
-            {datesApplied ? ' for your selected time' : ''} · rates and availability are simulated
-          </p>
-        </div>
+      <div className="quick-filters" role="group" aria-label="Parking filters">
+        <CompactSelect
+          label="Vehicle type"
+          icon="car"
+          value={filters.vehicle}
+          onChange={(e) => field('vehicle', e.target.value)}
+        >
+          <option value="">All vehicles</option>
+          <option>Car</option>
+          <option>Motorcycle</option>
+        </CompactSelect>
+        <CompactSelect
+          label="Parking type"
+          icon="roof"
+          value={filters.parkingType}
+          onChange={(e) => field('parkingType', e.target.value)}
+        >
+          <option value="">All parking</option>
+          <option>Covered</option>
+          <option>Open-air</option>
+        </CompactSelect>
         <button
-          ref={filterTrigger}
           className="button filter-toggle"
+          ref={filterTrigger}
           type="button"
           onClick={() => setFiltersOpen(true)}
         >
-          <Icon name="filter" size={18} />
+          <Icon name="filter" size={16} />
           Filters
+          {(filters.availability || filters.maxPrice) && (
+            <span className="filter-active-dot" aria-label="Active filters">
+              •
+            </span>
+          )}
         </button>
-      </div>
-      <div className="discovery-toolbar">
-        <div className="desktop-filters">{filterControls}</div>
-        <label className="parking-sort">
-          Sort By
-          <select
-            aria-label="Sort By"
-            value={filters.sortBy}
-            onChange={(e) => field('sortBy', e.target.value)}
-          >
-            <option value="default">Default Order</option>
-            <option value="name-asc">Name (A–Z)</option>
-            <option value="name-desc">Name (Z–A)</option>
-            <option value="availability">Availability (Available First)</option>
-            <option value="price-asc">Price: low to high</option>
-            <option value="price-desc">Price: high to low</option>
-          </select>
-        </label>
+        <button
+          className="button search-times-toggle"
+          type="button"
+          aria-expanded={datesExpanded}
+          aria-controls={datesExpanded ? 'search-visit-times' : undefined}
+          aria-label={datesExpanded ? 'Hide visit times' : 'Add visit times'}
+          onClick={() => setDatesExpanded(!datesExpanded)}
+        >
+          <Icon name="calendar" size={16} />
+          {datesApplied ? timing.date.slice(5) : 'Dates'}
+        </button>
         <button
           className="button saved-filter"
+          type="button"
           aria-pressed={filters.savedOnly}
+          aria-label={filters.savedOnly ? 'Show All' : 'Saved Only'}
           onClick={() =>
             savedView && filters.savedOnly ? onShowAll() : field('savedOnly', !filters.savedOnly)
           }
         >
           <Icon name="heart" size={16} />
-          {filters.savedOnly ? 'Show All' : 'Saved Only'}
+          {filters.savedOnly ? 'Show all' : 'Saved'}
           <span>{savedIds.length}</span>
         </button>
-        <button className="text-button parking-reset" type="button" onClick={reset}>
-          Reset Filters
+      </div>
+      <div className="discovery-toolbar" id="listing-results">
+        <p className="parking-result-count" role="status">
+          {results.length} {results.length === 1 ? 'parking area' : 'parking areas'} shown
+          {datesApplied && <span className="parking-sr-only"> for your selected time</span>}
+        </p>
+        <CompactSelect
+          label="Sort By"
+          icon="sort"
+          className="parking-sort"
+          value={filters.sortBy}
+          onChange={(e) => field('sortBy', e.target.value)}
+        >
+          <option value="default">Recommended</option>
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="availability">Availability</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+        </CompactSelect>
+        <button
+          className="text-button parking-reset"
+          aria-label="Reset Filters"
+          title="Reset filters"
+          type="button"
+          onClick={reset}
+        >
+          <Icon name="reset" size={15} />
+          <span>Reset</span>
         </button>
       </div>
       {listingError && (
@@ -378,61 +336,17 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
           ))}
         </div>
       )}
-      {featured && (
-        <>
-          <section className="marketplace-recommendations">
-            <div className="section-title">
-              <div>
-                <p className="eyebrow">A DIFFERENT WAY TO PARK</p>
-                <h2>Meet the neighborhood spaces.</h2>
-              </div>
-              <p>Try private driveways and independent lots with fictional local hosts.</p>
-            </div>
-            <div className="recommended-links">
-              {areas
-                .filter((area) => !area.verifiedLocation)
-                .slice(0, 3)
-                .map((area) => (
-                  <button key={area.id} onClick={() => open(area)}>
-                    <span className="host-avatar">
-                      {area.hostName
-                        .split(' ')
-                        .map((s) => s[0])
-                        .slice(0, 2)
-                        .join('')}
-                    </span>
-                    <span>
-                      <strong>{area.name}</strong>
-                      <small>
-                        {area.hostName} · {area.neighborhood}
-                      </small>
-                    </span>
-                    <Icon name="arrow" />
-                  </button>
-                ))}
-            </div>
-          </section>
-          <section className="hosting-callout">
-            <div>
-              <p className="eyebrow">MAKE ROOM FOR SOMETHING GOOD</p>
-              <h2>A spare space. A new possibility.</h2>
-              <p>See how a local host can list a space, welcome drivers, and manage visits.</p>
-            </div>
-            <button className="button primary" onClick={onHost}>
-              Explore hosting
-              <Icon name="arrow" size={18} />
-            </button>
-          </section>
-        </>
-      )}
       {selectedArea && (
         <ParkingDetailsModal
           area={selectedArea}
           reservationDraft={drafts[selectedId]}
-          onDraftChange={(draft) => setDrafts((previous) => ({ ...previous, [selectedId]: draft }))}
+          onDraftChange={(draft) => onDraftChange(selectedId, draft)}
           saved={savedIds.includes(selectedId)}
           onSave={() => toggleSaved(selectedId)}
-          onClose={() => setSelectedId(null)}
+          onClose={onListingClose}
+          onReservations={onReservations}
+          onViewPass={onViewPass}
+          onSignIn={onSignIn ? () => onSignIn(selectedId) : undefined}
         />
       )}
       {filtersOpen && (
@@ -460,7 +374,7 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
         >
           <div className="filter-sheet">
             <header>
-              <h2 id="filter-title">Find your kind of spot</h2>
+              <h2 id="filter-title">Refine your search</h2>
               <button
                 className="icon-button"
                 aria-label="Close filters"
@@ -484,5 +398,16 @@ export default function ParkingDiscovery({ savedView = false, active = true, onH
         </dialog>
       )}
     </section>
+  )
+}
+function CompactSelect({ label, icon, className = '', value, onChange, children }) {
+  return (
+    <label className={'compact-select ' + className}>
+      <Icon name={icon} size={16} />
+      <span className="parking-sr-only">{label}</span>
+      <select aria-label={label} value={value} onChange={onChange}>
+        {children}
+      </select>
+    </label>
   )
 }
