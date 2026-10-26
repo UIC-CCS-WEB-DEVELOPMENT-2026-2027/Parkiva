@@ -8,116 +8,257 @@ import { MockParkingProvider } from './components/MockParkingContext'
 import OperatorDashboard from './components/OperatorDashboard'
 import { DemoAccountProvider, useDemoAccount } from './components/DemoAccountContext'
 import DriverDashboard from './components/DriverDashboard'
+import Icon from './components/Icon'
 
 export default function App() {
-  return <DemoAccountProvider><AccountWorkspace /></DemoAccountProvider>
+  return (
+    <DemoAccountProvider>
+      <AccountWorkspace />
+    </DemoAccountProvider>
+  )
 }
-
 function AccountWorkspace() {
   const { account } = useDemoAccount()
-  return <MockParkingProvider key={account?.id || 'guest'}><ParkivaApp /></MockParkingProvider>
+  return (
+    <MockParkingProvider key={account?.id || 'guest'}>
+      <ParkivaApp />
+    </MockParkingProvider>
+  )
 }
-
 function ParkivaApp() {
-  const [guestOpen, setGuestOpen] = useState(false)
   const { account, login, logout, error: accountError } = useDemoAccount()
-  const [view, setView] = useState(account?.id === 'operator-demo' ? 'operator' : account ? 'driver' : 'browse')
+  const home = account?.id === 'operator-demo' ? 'operator' : account ? 'driver' : 'browse'
+  function currentRoute() {
+    const route = window.location.hash.slice(1)
+    if (['browse', 'saved', 'reservations', 'operator'].includes(route)) return route
+    if (!account && ['login', 'register'].includes(route)) return route
+    if (account?.id === 'driver-demo' && route === 'driver') return route
+    return home
+  }
+  const [view, setView] = useState(currentRoute)
+  const [guestOpen, setGuestOpen] = useState(false)
   const guestRef = useRef(null)
   const guestButtonRef = useRef(null)
-
+  function navigate(next) {
+    setGuestOpen(false)
+    setView(next)
+    if (window.location.hash !== '#' + next) window.history.pushState(null, '', '#' + next)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
+  const browse = () => navigate('browse')
+  useEffect(() => {
+    const back = () => {
+      setGuestOpen(false)
+      setView(currentRoute())
+    }
+    window.addEventListener('popstate', back)
+    return () => window.removeEventListener('popstate', back)
+  }, [])
   useEffect(() => {
     if (!guestOpen) return
-    function handleOutside(event) {
-      if (!guestRef.current.contains(event.target)) setGuestOpen(false)
+    const outside = (event) => {
+      if (!guestRef.current?.contains(event.target)) setGuestOpen(false)
     }
-    function handleEscape(event) {
+    const escape = (event) => {
       if (event.key === 'Escape') {
         setGuestOpen(false)
-        guestButtonRef.current.focus()
+        guestButtonRef.current?.focus()
       }
     }
-    document.addEventListener('pointerdown', handleOutside)
-    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('pointerdown', outside)
+    document.addEventListener('keydown', escape)
     return () => {
-      document.removeEventListener('pointerdown', handleOutside)
-      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('pointerdown', outside)
+      document.removeEventListener('keydown', escape)
     }
   }, [guestOpen])
-
-  function browse() {
-    setGuestOpen(false)
-    setView('browse')
-    requestAnimationFrame(() => {
-      const heading = document.getElementById('parking-heading')
-      heading?.focus({ preventScroll: true })
-      heading?.scrollIntoView({ block: 'start' })
-    })
-  }
-
   useEffect(() => {
-    if (view === 'reservations') {
-      document.getElementById('reservations-heading')?.focus()
+    const ids = {
+      browse: 'parking-heading',
+      saved: 'parking-heading',
+      reservations: 'reservations-heading',
+      driver: 'driver-dashboard-heading',
+      operator: 'operator-dashboard-heading',
+      login: 'demo-auth-heading',
+      register: 'demo-auth-heading',
     }
-    if (view === 'login' || view === 'register') document.getElementById('demo-auth-heading')?.focus()
-    if (view === 'operator') document.getElementById('operator-dashboard-heading')?.focus()
-    if (view === 'driver') document.getElementById('driver-dashboard-heading')?.focus()
+    document.getElementById(ids[view])?.focus({ preventScroll: true })
+    document.title =
+      (view === 'browse'
+        ? 'Find parking in Davao'
+        : {
+            saved: 'Saved parking',
+            reservations: 'My Reservations',
+            driver: 'Your dashboard',
+            operator: 'Host workspace',
+            login: 'Demo login',
+            register: 'Try Parkiva',
+          }[view]) + ' | Parkiva'
   }, [view])
-
-  function openAuth(mode) {
-    setGuestOpen(false)
-    setView(mode)
-  }
-
   return (
     <div className="landing-page">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
       <header className="site-header">
         <nav className="navbar" aria-label="Main navigation">
-          <img className="navbar-logo" src="/parkiva.png" alt="Parkiva" />
-          <div className="nav-controls">
-            <button className="nav-button" onClick={browse} aria-current={view === 'browse' ? 'page' : undefined}>Browse</button>
-            {account?.id === 'driver-demo' && <button className="nav-button" aria-current={view === 'driver' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('driver') }}>Driver Dashboard</button>}
-            <button className="nav-button" aria-current={view === 'reservations' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('reservations') }}>My Reservations</button>
-            <button className="nav-button" aria-current={view === 'operator' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('operator') }}>Operator Demo</button>
-            <div className="guest-control" ref={guestRef} onBlur={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget)) setGuestOpen(false)
-            }}>
-              <button className="nav-button guest-button" ref={guestButtonRef}
-                aria-expanded={guestOpen} aria-controls="guest-dropdown"
-                onClick={() => setGuestOpen(!guestOpen)}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                  <circle cx="12" cy="8" r="3.5" />
-                  <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
-                </svg>
-                {account ? `${account.role} demo` : 'Guest'}
-                <svg className="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                  <path d="m4 6 4 4 4-4" />
-                </svg>
+          <button className="brand-button" aria-label="Parkiva home" onClick={browse}>
+            <img className="navbar-logo" src="/parkiva.png" alt="Parkiva" width="72" height="72" />
+          </button>
+          <div className="primary-navigation">
+            <button
+              className="nav-button"
+              aria-current={view === 'browse' ? 'page' : undefined}
+              onClick={browse}
+            >
+              <Icon name="search" size={18} />
+              Browse
+            </button>
+            <button
+              className="nav-button"
+              aria-current={view === 'saved' ? 'page' : undefined}
+              onClick={() => navigate('saved')}
+            >
+              <Icon name="heart" size={18} />
+              Saved
+            </button>
+            <button
+              className="nav-button"
+              aria-current={view === 'reservations' ? 'page' : undefined}
+              onClick={() => navigate('reservations')}
+            >
+              <Icon name="qr" size={18} />
+              My Reservations
+            </button>
+            {account?.id === 'driver-demo' && (
+              <button
+                className="nav-button"
+                aria-current={view === 'driver' ? 'page' : undefined}
+                onClick={() => navigate('driver')}
+              >
+                <Icon name="user" size={18} />
+                Driver Dashboard
               </button>
-              {guestOpen && <div className="guest-dropdown" id="guest-dropdown">
-                {account ? <button onClick={logout}>Log Out (demo)</button> : <>
-                  <button onClick={() => openAuth('login')}>Log In</button>
-                  <button onClick={() => openAuth('register')}>Register</button>
-                </>}
-              </div>}
+            )}
+          </div>
+          <div className="nav-controls">
+            <button
+              className="nav-button host-nav"
+              aria-current={view === 'operator' ? 'page' : undefined}
+              onClick={() => navigate('operator')}
+            >
+              {account?.id === 'operator-demo' ? 'Host workspace' : 'Explore hosting'}
+              <Icon name="arrow" size={16} />
+            </button>
+            <div
+              className="guest-control"
+              ref={guestRef}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setGuestOpen(false)
+              }}
+            >
+              <button
+                className="guest-button"
+                ref={guestButtonRef}
+                aria-expanded={guestOpen}
+                aria-controls="guest-dropdown"
+                onClick={() => setGuestOpen(!guestOpen)}
+              >
+                <Icon name="user" size={18} />
+                <span>
+                  {account
+                    ? account.id === 'driver-demo'
+                      ? 'Driver · demo'
+                      : 'Host · demo'
+                    : 'Guest'}
+                </span>
+                <Icon name="menu" size={16} />
+              </button>
+              {guestOpen && (
+                <div className="guest-dropdown" id="guest-dropdown">
+                  {account ? (
+                    <>
+                      <p>{account.role} demo account</p>
+                      <button
+                        onClick={() =>
+                          navigate(account.id === 'driver-demo' ? 'driver' : 'operator')
+                        }
+                      >
+                        Your workspace
+                      </button>
+                      <button
+                        onClick={() => {
+                          window.history.replaceState(null, '', '#browse')
+                          logout()
+                        }}
+                      >
+                        Log Out (demo)
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => navigate('login')}>Log In</button>
+                      <button onClick={() => navigate('register')}>Register</button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </nav>
-        <p className="demo-session-notice" role="status">{account ? `Simulated ${account.role} session. Only the demo account ID is saved. All data and role restrictions are browser-local demonstrations, not secure authentication or real facility management.` : ''}</p>
-        {accountError && <p className="demo-session-notice" role="alert">{accountError}</p>}
       </header>
-      <main className="discovery-main">
-      <div hidden={view !== 'browse'}><ParkingDiscovery /></div>
-      {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
-      {view === 'driver' && account?.id === 'driver-demo' && <DriverDashboard onBrowse={browse} />}
-      {view === 'operator' && <OperatorDashboard onBrowse={browse} onLogin={() => openAuth('login')} />}
-      {(view === 'login' || view === 'register') && <DemoAuthForm key={view} mode={view} onSwitch={openAuth} onBrowse={browse}
-        onComplete={login} />}
-      <aside className="development" aria-labelledby="development-heading">
-        <h2 id="development-heading"><span className="status-dot" aria-hidden="true" />Still in Development</h2>
-        <p>Student demo. Location listings are real; availability and reservations are simulated.</p>
-      </aside>
+      <div className="preview-disclosure">
+        <span className="preview-dot" aria-hidden="true" />
+        <p>
+          Marketplace preview. Prices, availability, hosts and bookings are simulated.{' '}
+          <span>No real parking access or payments.</span>
+        </p>
+      </div>
+      {accountError && (
+        <p className="inline-notice" role="alert">
+          {accountError}
+        </p>
+      )}
+      <main className="discovery-main" id="main-content" tabIndex={-1}>
+        <div hidden={view !== 'browse' && view !== 'saved'}>
+          <ParkingDiscovery
+            active={view === 'browse' || view === 'saved'}
+            savedView={view === 'saved'}
+            onShowAll={browse}
+            onHost={() => navigate('operator')}
+          />
+        </div>
+        {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
+        {view === 'driver' && (
+          <DriverDashboard onBrowse={browse} onSaved={() => navigate('saved')} />
+        )}
+        {view === 'operator' && (
+          <OperatorDashboard onBrowse={browse} onLogin={() => navigate('login')} />
+        )}
+        {(view === 'login' || view === 'register') && (
+          <DemoAuthForm
+            key={view}
+            mode={view}
+            onSwitch={navigate}
+            onBrowse={browse}
+            onComplete={(id) => {
+              const ok = login(id)
+              if (ok)
+                window.history.replaceState(
+                  null,
+                  '',
+                  id === 'driver-demo' ? '#driver' : '#operator',
+                )
+              return ok
+            }}
+          />
+        )}
       </main>
-      <Footer />
+      <Footer
+        onBrowse={browse}
+        onHost={() => navigate('operator')}
+        onReservations={() => navigate('reservations')}
+      />
     </div>
   )
 }

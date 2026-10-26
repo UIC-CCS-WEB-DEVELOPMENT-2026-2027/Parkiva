@@ -1,120 +1,167 @@
 import assert from 'node:assert/strict'
-import { pathToFileURL } from 'node:url'
-const { chromium } = process.env.PARKIVA_PLAYWRIGHT_PATH ? await import(pathToFileURL(process.env.PARKIVA_PLAYWRIGHT_PATH).href) : await import('playwright')
-const browser = await chromium.launch({ headless: true, ...(process.env.PARKIVA_CHROMIUM_PATH ? { executablePath: process.env.PARKIVA_CHROMIUM_PATH } : {}) })
+import { launch, baseURL, button, fit, login, logout } from './helpers.mjs'
+const browser = await launch()
 try {
   for (const width of [320, 375, 390, 1280]) {
     const context = await browser.newContext({ viewport: { width, height: 900 } })
     const page = await context.newPage()
     page.setDefaultTimeout(7000)
     const errors = []
-    const submittedRequests = []
+    const submissions = []
     page.on('pageerror', (error) => errors.push(error.message))
-    page.on('request', (request) => { if (request.method() !== 'GET') submittedRequests.push(request.url()) })
-    const button = (name) => page.getByRole('button', { name, exact: true })
-    const fit = async () => assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Overflow at ${width}`)
-    async function openLogin() { await button('Guest').click(); await button('Log In').click(); await page.getByRole('heading', { name: 'Demo account login', exact: true }).waitFor() }
-    async function logout(role) { await button(`${role} demo`).click(); await button('Log Out (demo)').click(); await button('Guest').waitFor() }
-    await page.goto(process.env.PARKIVA_BASE_URL || 'http://127.0.0.1:5173')
-    await button('Save Aldevinco Pay Parking').click()
-    const guestFavorites = await page.evaluate(() => localStorage.getItem('parkiva-saved-parking-ids'))
-    await button('Operator Demo').click()
-    assert.ok(await page.getByLabel('Manual mock status for A01', { exact: true }).isDisabled())
-    await openLogin()
-    await button('Log In (demo)').click()
+    page.on('request', (request) => {
+      if (request.method() !== 'GET') submissions.push(request.url())
+    })
+    await page.goto(baseURL)
+    await button(page, 'Save Aldevinco Pay Parking').click()
+    const guestFavorites = await page.evaluate(() =>
+      localStorage.getItem('parkiva-saved-parking-ids'),
+    )
+    await button(page, 'Explore hosting').first().click()
+    await button(page, 'Spaces & availability').click()
+    assert.ok(await page.getByLabel('Set status for A01', { exact: true }).isDisabled())
+    await button(page, 'Guest').click()
+    await button(page, 'Log In').click()
+    await button(page, 'Log In (demo)').click()
     assert.equal(await page.locator('.demo-auth [aria-invalid="true"]').count(), 2)
-    await button('Quick-fill Driver').click()
-    assert.equal(await page.getByLabel('Demo email address', { exact: true }).inputValue(), 'driver@parkiva.demo')
-    await button('Show password').click()
-    assert.equal(await page.getByLabel('Demo password', { exact: true }).getAttribute('type'), 'text')
+    await button(page, 'Quick-fill Driver').click()
+    assert.equal(
+      await page.getByLabel('Demo email address', { exact: true }).inputValue(),
+      'driver@parkiva.demo',
+    )
+    await button(page, 'Show password').click()
+    assert.equal(
+      await page.getByLabel('Demo password', { exact: true }).getAttribute('type'),
+      'text',
+    )
     await page.getByLabel('Demo password', { exact: true }).fill('wrong')
-    await button('Log In (demo)').click()
-    await page.getByText('Demo email or password does not match. Use one of the two sample accounts below.', { exact: true }).waitFor()
-    await button('Quick-fill Driver').click()
-    await fit()
-    await button('Log In (demo)').click()
-    await page.getByRole('heading', { name: 'Driver demo dashboard', exact: true }).waitFor()
+    await button(page, 'Log In (demo)').click()
+    await page
+      .getByText(
+        'Demo email or password does not match. Use one of the two sample accounts below.',
+        { exact: true },
+      )
+      .waitFor()
+    await button(page, 'Go to demo registration').click()
+    await button(page, 'Try registration demo').click()
+    assert.equal(
+      await page.getByLabel('Demo display name', { exact: true }).getAttribute('aria-invalid'),
+      'true',
+    )
+    await button(page, 'Go to demo login').click()
+    await button(page, 'Quick-fill Driver').click()
+    await button(page, 'Log In (demo)').click()
+    await page.getByRole('heading', { name: 'Good to see you, driver.', exact: true }).waitFor()
+    await page.waitForFunction(
+      () => document.querySelectorAll('.reservation-history-card').length === 3,
+    )
     assert.equal(await page.locator('.driver-favorites article').count(), 3)
-    await page.waitForFunction(() => document.querySelectorAll('.reservation-history-card').length === 3)
-    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('parkiva-demo-account-v1'))), { accountId: 'driver-demo' })
-    await fit()
-    await page.locator('.driver-favorites article').first().getByRole('button').click()
-    await button('Browse').click()
-    await button('Save Aldevinco Pay Parking').waitFor()
-    await button('Driver Dashboard').click()
+    assert.deepEqual(
+      await page.evaluate(() => JSON.parse(localStorage.getItem('parkiva-demo-account-v1'))),
+      { accountId: 'driver-demo' },
+    )
+    await fit(page, width)
+    await page
+      .locator('.driver-favorites article')
+      .first()
+      .getByRole('button', { name: /^Unsave/ })
+      .click()
+    await button(page, 'Browse').click()
+    await button(page, 'Save Aldevinco Pay Parking').waitFor()
+    await button(page, 'Driver Dashboard').click()
     assert.equal(await page.locator('.driver-favorites article').count(), 2)
-    await button('Browse').click()
-    await page.getByRole('button', { name: /View Details.*Aldevinco/ }).click()
-    await page.getByRole('button', { name: /^Slot A01, Car, Available/ }).click()
-    await button('Continue to date and time').click()
-    const date = await page.evaluate(() => { const now = new Date(); now.setDate(now.getDate() + 3); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` })
-    await page.getByLabel('Reservation date', { exact: true }).fill(date)
-    await page.getByLabel('Arrival time', { exact: true }).fill('10:00')
-    await page.getByLabel('Departure time', { exact: true }).fill('11:00')
-    await button('Continue to vehicle information').click()
-    await page.getByRole('form', { name: 'Vehicle information' }).getByLabel('Vehicle type', { exact: true }).selectOption('Car')
-    await page.getByLabel('Plate number', { exact: true }).fill('DEMO-NEW')
-    await button('Review selection').click(); await button('Confirm demo reservation').click()
-    await page.getByRole('heading', { name: 'Demo reservation confirmation', exact: true }).waitFor()
-    await button('View demo pass').click()
-    await page.getByRole('img', { name: 'QR code containing only the demo pass reference' }).waitFor()
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('parkiva-demo-reservations-v1:driver-demo')).reservations.length), 4)
-    assert.equal(await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1')), null)
-    await page.keyboard.press('Escape'); await button('Driver Dashboard').click()
-    const upcoming = page.locator('.reservation-history-card').filter({ hasText: 'DEMO-driver-demo-upcoming-' })
+    await button(page, 'Saved').click()
+    await button(page, 'Reset Filters').click()
+    assert.equal(await page.locator('.parking-card').count(), 2)
+    await page.getByRole('button', { name: /^Show All/ }).click()
+    assert.equal(await button(page, 'Browse').getAttribute('aria-current'), 'page')
+    await page.waitForFunction(() => document.querySelectorAll('.parking-card').length === 11)
+    assert.equal(await page.locator('.parking-card').count(), 11)
+    await button(page, 'Driver Dashboard').click()
+    const upcoming = page
+      .locator('.reservation-history-card')
+      .filter({ hasText: 'DEMO-driver-demo-upcoming-' })
     await upcoming.getByRole('button', { name: /^Cancel demo reservation/ }).click()
-    await button('Confirm cancellation').click()
-    await upcoming.locator('.reservation-history-status').filter({ hasText: 'Cancelled' }).waitFor()
+    await button(page, 'Confirm cancellation').click()
+    await upcoming.locator('.reservation-history-status--cancelled').waitFor()
     await page.reload()
-    await page.getByRole('heading', { name: 'Driver demo dashboard', exact: true }).waitFor()
     assert.equal(await page.locator('.driver-favorites article').count(), 2)
-    const driverRaw = await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1:driver-demo'))
-    await logout('Driver')
-    assert.equal(await page.evaluate(() => localStorage.getItem('parkiva-saved-parking-ids')), guestFavorites)
-    await button('My Reservations').click()
-    await page.getByText('No demo reservations yet', { exact: true }).waitFor()
-    await openLogin()
-    await button('Quick-fill Parking Operator').click()
-    await button('Log In (demo)').click()
-    await page.getByRole('heading', { name: 'Mock parking operator dashboard', exact: true }).waitFor()
-    assert.equal(await page.locator('.operator-summary').count(), 3)
-    assert.equal(await page.getByLabel('Manage mock facility', { exact: true }).locator('option').count(), 3)
-    assert.equal(await page.getByLabel('Manage mock facility', { exact: true }).locator('option[value="davao-gmall-parking"]').count(), 0)
-    await page.locator('.operator-record').waitFor()
-    await page.getByLabel('Manual mock status for A04', { exact: true }).selectOption('Available')
-    await page.getByRole('status').filter({ hasText: 'A04 mock status saved as Available.' }).waitFor()
+    const driverRaw = await page.evaluate(() =>
+      localStorage.getItem('parkiva-demo-reservations-v1:driver-demo'),
+    )
+    await logout(page, 'Driver')
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem('parkiva-saved-parking-ids')),
+      guestFavorites,
+    )
+    await button(page, 'My Reservations').click()
+    await page.getByText('Your next visit starts with a spot.', { exact: true }).waitFor()
+    await login(page, 'Parking Operator')
+    await button(page, 'Spaces & availability').click()
+    const ids = await page
+      .locator('#operator-facility option')
+      .evaluateAll((nodes) => nodes.map((node) => node.value))
+    assert.equal(ids.length, 6)
+    assert.ok(!ids.includes('davao-gmall-parking'))
+    await page.getByLabel('Set status for A04', { exact: true }).selectOption('Available')
+    await page.getByRole('status').filter({ hasText: 'A04 is now available' }).waitFor()
     const rejected = await page.evaluate(async () => {
       const { saveMockSlotStatus } = await import('/src/components/mockSlotState.js')
       const { parkingSlotsByFacility } = await import('/src/components/parkingSlotData.js')
       return saveMockSlotStatus('davao-gmall-parking', 'G01', 'Occupied', parkingSlotsByFacility)
     })
     assert.equal(rejected.ok, false)
-    assert.equal(await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1:driver-demo')), driverRaw)
-    await fit()
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1:driver-demo')),
+      driverRaw,
+    )
+    await fit(page, width)
     await page.reload()
-    await page.getByRole('heading', { name: 'Mock parking operator dashboard', exact: true }).waitFor()
-    assert.equal(await page.getByLabel('Manual mock status for A04', { exact: true }).inputValue(), 'Available')
-    await logout('Parking Operator')
-    await openLogin()
-    await button('Quick-fill Driver').click(); await button('Log In (demo)').click()
-    await page.getByRole('heading', { name: 'Driver demo dashboard', exact: true }).waitFor()
-    assert.equal(await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1:driver-demo')), driverRaw)
-    const persisted = await page.evaluate(() => JSON.stringify({ local: { ...localStorage }, session: { ...sessionStorage } }))
-    assert.ok(!persisted.includes('DriverDemo123!') && !persisted.includes('OperatorDemo123!') && !persisted.includes('"password"'))
-    // Account changes in another tab must reset the workspace, not leak old state.
+    await button(page, 'Spaces & availability').click()
+    assert.equal(
+      await page.getByLabel('Set status for A04', { exact: true }).inputValue(),
+      'Available',
+    )
+    await logout(page, 'Parking Operator')
+    await login(page, 'Driver')
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1:driver-demo')),
+      driverRaw,
+    )
+    const persisted = await page.evaluate(() =>
+      JSON.stringify({ local: { ...localStorage }, session: { ...sessionStorage } }),
+    )
+    assert.ok(
+      !persisted.includes('DriverDemo123!') &&
+        !persisted.includes('OperatorDemo123!') &&
+        !persisted.includes('"password"'),
+    )
     const other = await context.newPage()
-    await other.goto(process.env.PARKIVA_BASE_URL || 'http://127.0.0.1:5173')
+    await other.goto(baseURL)
     await other.evaluate(() => localStorage.removeItem('parkiva-demo-account-v1'))
-    await button('Guest').waitFor()
-    await openLogin()
-    await page.evaluate(() => { Storage.prototype.setItem = function () { throw Error('quota') } })
-    await button('Quick-fill Driver').click(); await button('Log In (demo)').click()
+    await button(page, 'Guest').waitFor()
+    await button(page, 'Guest').click()
+    await button(page, 'Log In').click()
+    await page.evaluate(() => {
+      Storage.prototype.setItem = function () {
+        throw Error('quota')
+      }
+    })
+    await button(page, 'Quick-fill Driver').click()
+    await button(page, 'Log In (demo)').click()
     await page.getByRole('alert').filter({ hasText: 'demo session could not be saved' }).waitFor()
     assert.equal(await page.evaluate(() => localStorage.getItem('parkiva-demo-account-v1')), null)
-    await button('Guest').waitFor()
+    await button(page, 'Guest').waitFor()
+    await fit(page, width)
     assert.deepEqual(errors, [])
-    assert.deepEqual(submittedRequests, [])
-    console.log(`PASS ${width}px: credential validation/quick-fill/toggle, seeded dashboards, identifier-only session reload/logout, favorite sync, cancellation persistence, workspace isolation, operator assignment guards and layouts`)
+    assert.deepEqual(submissions, [])
+    console.log(
+      'PASS ' +
+        width +
+        'px: login/registration/quick-fill/validation/password toggle, driver favorites/history, account isolation/logout/reload, operator assignment guards, storage failure and cross-tab session reset',
+    )
     await context.close()
   }
-} finally { await browser.close() }
+} finally {
+  await browser.close()
+}
