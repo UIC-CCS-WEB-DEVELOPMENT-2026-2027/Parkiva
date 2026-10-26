@@ -2,9 +2,9 @@
 
 **Smart Parking. Simple Reservations.**
 
-Parkiva is a web-based Public Parking Reservation and Management System designed to make parking more convenient for drivers and easier to manage for participating parking facilities.
+Parkiva is a student-built frontend demonstration of a Public Parking Reservation and Management System.
 
-The platform is intended to help users locate participating parking areas, check availability, reserve a space before arriving, manage vehicle information, and use QR-based verification during entry and exit. For parking operators, it is intended to provide a centralized way to monitor reservations, vehicles, and parking slot statuses: Available, Reserved, and Occupied.
+**Demo Only — No Actual Parking Reservation Created.** Facilities, visuals, slot availability, reservations, and entry/exit checks are fictional. The demo has no backend, database, real authentication, or connection to parking facilities.
 
 
 ## Development Workflow
@@ -57,30 +57,37 @@ tracked using GitHub Issues and GitHub Projects.
 - Help operators monitor occupancy and reservations.
 - Provide an organized parking experience for drivers and operators.
 
-## Core Features
+## Implemented Demo Features
 
-Parkiva's intended core functionality includes:
+The frontend currently includes:
 
-- Parking facility discovery and slot availability
-- Parking reservations with date and time selection
-- Vehicle information management
-- Unique QR codes for confirmed reservations
-- QR-based entry/check-in and exit/check-out verification
-- Parking status management: Available, Reserved, and Occupied
-- Reservation history
-- Parking operator management tools
+- Public parking discovery with search, vehicle/status filters, sorting, and browser-saved favorites.
+- Responsive facility details with clearly labeled CSS demonstration illustrations.
+- Available-only slot selection, date/time validation, and vehicle information checked against the facility and selected slot.
+- Editable review steps that retain selections, followed by simulated confirmation with a unique demo reference.
+- Browser-local reservation storage and overlap checks for the same slot or vehicle, with safe handling of unavailable or corrupted storage.
+- My Reservations with details, time-based statuses, and confirmed cancellation of upcoming demo reservations.
+- QR passes containing only a demo reference, with simulated entry during the scheduled time window and exit after recorded entry. These are not secure access credentials; no camera scanning or real gate integration is implemented.
+- A public operator simulation with facility summaries, Available/Reserved/Occupied counts, demo records, and persisted mock slot edits shared with public browsing.
+- Demo login and registration forms with basic validation and a visibility toggle for a fixed, read-only sample password. They collect no password and create no real account. The simulated session exists only until refresh or until it is ended.
+
+Reservations and favorites belong to this browser's site storage, not to an authenticated account. Different profiles, devices, or site addresses do not share them. Clearing site data removes them. Multiple tabs share changes where supported; saving reservations, cancellations, verification, and slot edits requires browser storage and Web Locks. No server verifies or protects this data.
 
 ## How Parkiva Works
 
-The intended reservation workflow is:
+The working demo journey is:
 
-1. A user finds a participating parking facility.
-2. The user checks available spaces.
-3. The user selects a parking slot and reservation period.
-4. Parkiva creates the reservation and provides a unique QR code.
-5. At entry, authorized parking staff scan the code to verify the reservation and mark the slot as Occupied.
-6. At exit, staff scan the code again to record departure and return the slot to Available.
-7. The completed session is recorded in the user's reservation history.
+1. Browse fictional parking facilities without logging in, then open View Details.
+2. Select an available mock slot, choose a future arrival and later same-day departure, and enter demo vehicle information.
+3. Review the details or go back to edit them without losing the other valid selections.
+4. Confirm the simulation. A demo reference and snapshot are saved in this browser after validation and local conflict checks.
+5. View the demo pass from confirmation or My Reservations. Its entry/exit buttons use the browser's local clock and stored records; they never grant real access.
+6. Use My Reservations to inspect records or confirm cancellation of an upcoming demo reservation.
+7. Open Operator Demo to explore local slot statuses. Current reservation windows appear Reserved; recorded entry without exit appears Occupied. Future bookings stay in the records, and manual edits do not cancel reservations.
+
+## Future Backend Functionality
+
+Real reservations would require server-side booking validation, shared availability, durable database records, secure authentication, authorization for staff actions, and independently verified QR entry/exit. None of those services are implemented by this frontend demo. The operator dashboard and simulated session must not be treated as evidence of staff authorization or secure account ownership.
 
 ## Development Team
 

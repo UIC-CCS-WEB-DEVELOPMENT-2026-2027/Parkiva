@@ -28,6 +28,22 @@ export default function ParkingDetailsModal({ area, onClose, reservationDraft, o
         event.clientY < bounds.top || event.clientY > bounds.bottom) onClose()
   }
 
+  function keepKeyboardFocus(event) {
+    if (event.key !== 'Tab') return
+    const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])')]
+      .filter((node) => node.getClientRects().length > 0)
+    const first = controls[0]
+    const last = controls[controls.length - 1]
+    if (!first) { event.preventDefault(); return }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
+
   return (
     <dialog
       ref={dialogRef}
@@ -36,6 +52,7 @@ export default function ParkingDetailsModal({ area, onClose, reservationDraft, o
       aria-describedby="parking-details-description"
       onCancel={(event) => { event.preventDefault(); onClose() }}
       onClick={closeFromBackdrop}
+      onKeyDown={keepKeyboardFocus}
     >
       <div className="parking-details-modal-content">
         <header className="parking-details-modal-header">

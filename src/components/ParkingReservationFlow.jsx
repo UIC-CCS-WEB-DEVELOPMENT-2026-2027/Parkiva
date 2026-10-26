@@ -18,12 +18,13 @@ export default function ParkingReservationFlow({ facility, slots = [], supported
     onDraftChange?.(next)
   }
   const setStep = (value) => update({ step: value })
-  const setSelectedId = (value) => update({ selectedId: value })
+  const setSelectedId = (value) => { setFlowNotice(''); update({ selectedId: value }) }
   const setDateTime = (value) => update({ dateTime: value })
   const setVehicle = (value) => update({ vehicle: value })
   const [saving, setSaving] = useState(false)
   const savingRef = useRef(false)
   const [saveError, setSaveError] = useState('')
+  const [flowNotice, setFlowNotice] = useState('')
   const headingRef = useRef(null)
   const previousStep = useRef(step)
   const selectedSlot = slots.find((slot) => slot.id === selectedId && slot.status === 'Available')
@@ -51,6 +52,7 @@ export default function ParkingReservationFlow({ facility, slots = [], supported
         {step === 'confirmation' ? 'Demo reservation confirmation' : step === 'slots' ? 'Step 1 of 4: Parking slot' : step === 'datetime' ? 'Step 2 of 4: Date and time' : step === 'vehicle' ? 'Step 3 of 4: Vehicle information' : 'Step 4 of 4: Review selection'}
       </h3>
       {step !== 'confirmation' && <p className="demo-reservation-notice">{DEMO_NOTICE}</p>}
+      {flowNotice && <p role="alert">{flowNotice}</p>}
       {step === 'slots' && <>
         <ParkingSlotSelection slots={slots} selectedId={selectedId} onSelectionChange={setSelectedId} />
         <div className="reservation-flow-actions">
@@ -62,7 +64,12 @@ export default function ParkingReservationFlow({ facility, slots = [], supported
         <p>Selected slot: {selectedSlot?.id} ({selectedSlot?.vehicle})</p>
         <ReservationDateTimeSelection value={dateTime} onChange={setDateTime} onBack={() => setStep('slots')}
           continueLabel="Continue to vehicle information"
-          onContinue={() => { if (selectedSlot && Object.keys(validateReservationDateTime(dateTime)).length === 0) setStep('vehicle') }} />
+          onContinue={() => {
+            if (!selectedSlot) {
+              setFlowNotice('Your selected slot is no longer available in this demo. Choose another slot; your date/time and vehicle information have been kept.')
+              setStep('slots')
+            } else if (Object.keys(validateReservationDateTime(dateTime)).length === 0) setStep('vehicle')
+          }} />
       </>}
       {step === 'vehicle' && <>
         <p>Selected slot: {selectedSlot?.id} ({selectedSlot?.vehicle})</p>
@@ -76,7 +83,7 @@ export default function ParkingReservationFlow({ facility, slots = [], supported
       {step === 'review' && <ReservationReview facility={facility} slots={slots} selectedId={selectedId} vehicle={vehicle} dateTime={dateTime}
         onEdit={(value) => { setSaveError(''); setStep(value) }} onConfirm={confirm} saving={saving} saveError={saveError} />}
       {step === 'confirmation' && confirmation && <DemoReservationConfirmation reservation={confirmation}
-        onRestart={() => { const next = createReservationDraft(); setLocalDraft(next); onDraftChange?.(next) }} onChooseParking={onChooseParking} />}
+        onRestart={() => { const next = createReservationDraft(); setFlowNotice(''); setLocalDraft(next); onDraftChange?.(next) }} onChooseParking={onChooseParking} />}
     </section>
   )
 }
