@@ -1,0 +1,25 @@
+.operator-dashboard { padding: 36px 0 48px; }
+.operator-dashboard h1 { font-size: clamp(24px, 4vw, 30px); letter-spacing: -0.02em; }
+.operator-dashboard h2 { margin: 28px 0 16px; font-size: 20px; }
+.operator-dashboard p { font-size: 14px; line-height: 1.6; color: var(--color-text-muted); }
+.operator-dashboard .operator-demo-notice { padding: 16px; border: 1px solid var(--color-border); color: var(--color-primary); background: var(--color-surface); font-weight: 600; }
+.operator-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.operator-dashboard button, .operator-dashboard select { min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; }
+.operator-dashboard button { cursor: pointer; }
+.operator-dashboard button:hover { background: var(--color-background); }
+.operator-dashboard select { width: 100%; max-width: 420px; min-width: 0; }
+.operator-dashboard label { display: block; margin: 12px 0 8px; font-size: 14px; }
+.operator-dashboard :disabled { opacity: 0.6; cursor: not-allowed; }
+.operator-dashboard :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
+.operator-summaries, .operator-slot-grid, .operator-record-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.operator-summary, .operator-slot, .operator-record { min-width: 0; padding: 20px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); overflow-wrap: anywhere; }
+.operator-summary h2, .operator-slot h3, .operator-record h3 { margin: 0 0 12px; font-size: 17px; }
+.operator-dashboard dl { margin: 12px 0 0; font-size: 14px; line-height: 1.6; }
+.operator-dashboard dl div { display: grid; grid-template-columns: minmax(80px, 1fr) minmax(0, 2fr); gap: 8px; padding: 4px 0; }
+.operator-dashboard dt { color: var(--color-text-muted); }
+.operator-dashboard dd { margin: 0; }
+.operator-dashboard .operator-error { color: #a32626; }
+.operator-error p { color: inherit; }
+@media (max-width: 650px) {
+  .operator-summaries, .operator-slot-grid, .operator-record-grid { grid-template-columns: minmax(0, 1fr); }
+}
