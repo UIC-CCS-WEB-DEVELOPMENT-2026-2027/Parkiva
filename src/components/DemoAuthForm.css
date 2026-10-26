@@ -1,0 +1,24 @@
+.demo-auth { width: 100%; max-width: 560px; margin: 0 auto; padding: 36px 0 48px; }
+.demo-auth h1 { font-size: clamp(24px, 4vw, 30px); letter-spacing: -0.02em; }
+.demo-auth p { color: var(--color-text-muted); font-size: 14px; line-height: 1.6; }
+.demo-auth .demo-auth-notice { padding: 12px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-primary); font-weight: 600; }
+.demo-auth-field { margin-top: 20px; min-width: 0; }
+.demo-auth label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+.demo-auth input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; }
+.demo-auth input[readonly] { background: var(--color-background); }
+.demo-auth input[aria-invalid="true"] { border-color: #a32626; }
+.demo-auth .demo-auth-error { margin: 8px 0; color: #a32626; }
+.demo-auth-password { display: flex; gap: 8px; }
+.demo-auth-password input { flex: 1; }
+.demo-auth button { min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; cursor: pointer; }
+.demo-auth button:hover { background: var(--color-background); }
+.demo-auth button.demo-auth-submit { width: 100%; margin-top: 16px; background: var(--color-primary); border-color: var(--color-primary); color: white; }
+.demo-auth button.demo-auth-submit:hover { background: #103b78; }
+.demo-auth-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.demo-auth :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
+.demo-session-notice { max-width: 1152px; margin: 0 auto; padding: 8px 24px 12px; color: var(--color-text-muted); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.demo-session-notice:empty { display: none; }
+@media (max-width: 400px) {
+  .demo-auth-password { flex-wrap: wrap; }
+  .demo-auth-password input, .demo-auth-password button, .demo-auth-actions button { flex: 1 1 100%; }
+}

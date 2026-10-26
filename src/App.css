@@ -78,8 +78,6 @@ button:focus-visible, .development:focus-visible { outline: 2px solid var(--colo
 .guest-button .chevron { width: 14px; height: 14px; }
 .guest-dropdown { position: absolute; top: calc(100% + 6px); right: 0; z-index: 1; width: 200px; max-width: calc(100vw - 32px); padding: 4px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); }
 .guest-dropdown button { display: block; width: 100%; text-align: left; }
-.auth-notice { margin: 0; padding: 8px 12px; color: var(--color-text-muted); font-size: 13px; line-height: 1.5; }
-.auth-notice:empty { display: none; }
 @media (max-width: 375px) {
   .navbar { padding-inline: 16px; gap: 8px; }
   .nav-controls { gap: 2px; }
