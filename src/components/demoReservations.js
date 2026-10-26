@@ -10,6 +10,8 @@ export function createReservationDraft() {
 const text = (value) => typeof value === 'string' && Boolean(value.trim())
 function validRecord(record) {
   if (!record || !text(record.reference) || record.demo !== true || !text(record.confirmedAt) || Number.isNaN(Date.parse(record.confirmedAt))) return false
+  if (record.status !== undefined && !['confirmed', 'cancelled'].includes(record.status)) return false
+  if (record.status === 'cancelled' && (!text(record.cancelledAt) || Number.isNaN(Date.parse(record.cancelledAt)))) return false
   const { facility, slot, dateTime, vehicle } = record
   if (!facility || !slot || !dateTime || !vehicle || !text(facility.id) || !text(facility.name) || !text(facility.location) || !text(slot.id) || !text(slot.vehicle)) return false
   if (!text(vehicle.type) || !text(vehicle.plate) || typeof vehicle.model !== 'string' || !['date', 'arrival', 'departure'].every((key) => typeof dateTime[key] === 'string')) return false
@@ -28,10 +30,38 @@ export function readDemoReservations(storage) {
 
 const plateKey = (plate) => plate.replace(/[\s-]/g, '').toUpperCase()
 export function hasDemoConflict(records, candidate) {
-  return records.some((record) => record.dateTime.date === candidate.dateTime.date &&
+  return records.some((record) => record.status !== 'cancelled' && record.dateTime.date === candidate.dateTime.date &&
     record.dateTime.arrival < candidate.dateTime.departure && candidate.dateTime.arrival < record.dateTime.departure &&
     ((record.facility.id === candidate.facility.id && record.slot.id === candidate.slot.id) ||
       plateKey(record.vehicle.plate) === plateKey(candidate.vehicle.plate)))
+}
+
+export function demoReservationStatus(record, now = new Date()) {
+  if (record.status === 'cancelled') return 'Cancelled'
+  if (new Date(`${record.dateTime.date}T${record.dateTime.departure}`) <= now) return 'Completed'
+  if (new Date(`${record.dateTime.date}T${record.dateTime.arrival}`) <= now) return 'In progress'
+  return 'Upcoming'
+}
+
+export async function cancelDemoReservation(reference, options = {}) {
+  try {
+    const storage = options.storage ?? globalThis.localStorage
+    const locks = options.locks ?? globalThis.navigator?.locks
+    if (!locks?.request) return { ok: false, error: 'This browser cannot safely update demo reservations. Browser storage and Web Locks must be available.' }
+    return await locks.request(DEMO_RESERVATIONS_KEY, () => {
+      const records = readDemoReservations(storage)
+      const index = records.findIndex((record) => record.reference === reference)
+      if (index < 0) return { ok: false, error: 'This demo reservation could not be found. Refresh your reservations.' }
+      const now = options.now ?? new Date()
+      if (demoReservationStatus(records[index], now) !== 'Upcoming') return { ok: false, error: 'Only upcoming demo reservations can be cancelled. Refresh to see the current status.' }
+      const updated = { ...records[index], status: 'cancelled', cancelledAt: now.toISOString() }
+      const next = records.map((record, position) => position === index ? updated : record)
+      storage.setItem(DEMO_RESERVATIONS_KEY, JSON.stringify({ version: 1, reservations: next }))
+      return { ok: true, reservation: updated }
+    })
+  } catch {
+    return { ok: false, error: 'Cancellation could not be saved. Browser storage may be unavailable, full, or contain invalid data. No cancellation was recorded.' }
+  }
 }
 
 // All tabs use the same browser lock and re-read storage immediately before writing.

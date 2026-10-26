@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import ParkingDiscovery from './components/ParkingDiscovery'
 import Footer from './components/Footer'
+import ReservationHistory from './components/ReservationHistory'
 
 export default function App() {
   const [guestOpen, setGuestOpen] = useState(false)
   const [notice, setNotice] = useState('')
+  const [view, setView] = useState('browse')
   const guestRef = useRef(null)
   const guestButtonRef = useRef(null)
 
@@ -30,10 +32,19 @@ export default function App() {
 
   function browse() {
     setGuestOpen(false)
-    const heading = document.getElementById('parking-heading')
-    heading.focus({ preventScroll: true })
-    heading.scrollIntoView({ block: 'start' })
+    setView('browse')
+    requestAnimationFrame(() => {
+      const heading = document.getElementById('parking-heading')
+      heading?.focus({ preventScroll: true })
+      heading?.scrollIntoView({ block: 'start' })
+    })
   }
+
+  useEffect(() => {
+    if (view === 'reservations') {
+      document.getElementById('reservations-heading')?.focus()
+    }
+  }, [view])
 
   return (
     <div className="landing-page">
@@ -41,7 +52,8 @@ export default function App() {
         <nav className="navbar" aria-label="Main navigation">
           <img className="navbar-logo" src="/parkiva.png" alt="Parkiva" />
           <div className="nav-controls">
-            <button className="nav-button" onClick={browse}>Browse</button>
+            <button className="nav-button" onClick={browse} aria-current={view === 'browse' ? 'page' : undefined}>Browse</button>
+            <button className="nav-button" aria-current={view === 'reservations' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('reservations') }}>My Reservations</button>
             <div className="guest-control" ref={guestRef} onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) setGuestOpen(false)
             }}>
@@ -67,7 +79,8 @@ export default function App() {
         </nav>
       </header>
       <main className="discovery-main">
-      <ParkingDiscovery />
+      <div hidden={view !== 'browse'}><ParkingDiscovery /></div>
+      {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
       <section className="development" aria-labelledby="development-heading">
         <img className="parkiva-logo" src="/parkiva.png" alt="Parkiva logo" />
         <p className="tagline">Smarter Parking Starts Here.</p>
