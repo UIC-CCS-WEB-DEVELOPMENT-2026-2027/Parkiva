@@ -1,0 +1,5 @@
+.parking-location-visual { margin: 0; border-bottom: 1px solid var(--color-border); background: #edf2f5; }
+.parking-location-visual > div { display: flex; min-height: 120px; align-items: center; justify-content: center; flex-direction: column; gap: 8px; padding: 16px; }
+.parking-location-visual span { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid #aebdc9; border-radius: 4px; color: var(--color-text-muted); font-size: 24px; font-weight: 600; }
+.parking-location-visual p { margin: 0; color: var(--color-text-muted); font-size: 13px; text-align: center; }
+.parking-location-visual figcaption { padding: 8px 12px; border-top: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted); font-size: 11px; line-height: 1.5; text-align: center; }

@@ -4,7 +4,7 @@
 
 Parkiva is a student-built frontend demonstration of a Public Parking Reservation and Management System.
 
-**Demo Only — No Actual Parking Reservation Created.** Facilities, visuals, slot availability, reservations, and entry/exit checks are fictional. The demo has no backend, database, real authentication, or connection to parking facilities.
+**Demo Only — No Actual Parking Reservation Created.** Facility names and locations are researched in Davao City; slot layouts, vehicle options, availability, reservations, and entry/exit checks are simulated. No facility partnership is implied. The demo has no backend, database, real authentication, or connection to parking facilities.
 
 
 ## Development Workflow
@@ -61,8 +61,8 @@ tracked using GitHub Issues and GitHub Projects.
 
 The frontend currently includes:
 
-- Public parking discovery with search, vehicle/status filters, sorting, and browser-saved favorites.
-- Responsive facility details with clearly labeled CSS demonstration illustrations.
+- Eight researched Davao City parking locations with source citations and Google Maps search links, plus search, demo vehicle/status filters, sorting, and browser-saved favorites.
+- Responsive facility details with clearly labeled photo placeholders. No copyrighted Google Maps photos are copied or scraped.
 - Available-only slot selection, date/time validation, and vehicle information checked against the facility and selected slot.
 - Editable review steps that retain selections, followed by simulated confirmation with a unique demo reference.
 - Browser-local reservation storage and overlap checks for the same slot or vehicle, with safe handling of unavailable or corrupted storage.
@@ -77,7 +77,7 @@ Reservations and favorites belong to this browser's site storage, not to an auth
 
 The working demo journey is:
 
-1. Browse fictional parking facilities without logging in, then open View Details.
+1. Browse the researched Davao City location listings without logging in, then open View Details. Real-world admission, opening hours, and fees must be confirmed directly; none are promised by Parkiva.
 2. Select an available mock slot, choose a future arrival and later same-day departure, and enter demo vehicle information.
 3. Review the details or go back to edit them without losing the other valid selections.
 4. Confirm the simulation. A demo reference and snapshot are saved in this browser after validation and local conflict checks.
@@ -106,3 +106,9 @@ Parkiva is developed as an academic web development project under the College of
 ## Branding
 
 Parkiva uses its own visual identity and `parkiva.png` as the official project logo. The favicon uses the logo symbol without the wordmark.
+
+## Location Research and Photo Policy
+
+Names, location evidence, research date, and public sources are recorded with each listing. See [research notes](docs/davao-parking-research.md). Google Maps links open a location search, not a guaranteed parking entrance. No real capacity, fee, operating hours, or reservation partnership is supplied.
+
+No authorized Google Places photo integration or exact-location reusable photo license is configured, so all listings use explicit placeholders. No private API keys or remote photo requests are added. Retired fictional favorite IDs are removed instead of being assigned to real facilities. Earlier demo reservation snapshots remain unchanged in My Reservations; old mock status overrides are ignored rather than transferred to new locations.

@@ -12,12 +12,14 @@ export function readMockSlotOverrides(storage, catalog) {
   const data = JSON.parse(raw)
   if (data?.version !== 1 || !data.facilities || typeof data.facilities !== 'object' || Array.isArray(data.facilities)) throw Error('Invalid mock slot data')
   for (const [facilityId, slots] of Object.entries(data.facilities)) {
+    if (retiredParkingIds.includes(facilityId)) continue
     if (!catalog[facilityId] || !slots || typeof slots !== 'object' || Array.isArray(slots)) throw Error('Invalid mock facility')
     for (const [slotId, status] of Object.entries(slots)) {
       if (!catalog[facilityId].some((slot) => slot.id === slotId) || !SLOT_STATUSES.includes(status)) throw Error('Invalid mock slot')
     }
   }
-  return data.facilities
+  // Never reassign an old fictional facility's overrides to a real location.
+  return Object.fromEntries(Object.entries(data.facilities).filter(([id]) => !retiredParkingIds.includes(id)))
 }
 
 export function applyMockSlotOverrides(facilityId, slots, overrides) {
@@ -60,3 +62,4 @@ export async function saveMockSlotStatus(facilityId, slotId, status, catalog, op
     return { ok: false, error: 'Mock status could not be saved. Storage may be unavailable, full, or invalid. Existing data has not been replaced.' }
   }
 }
+import { retiredParkingIds } from './parkingData.js'

@@ -31,3 +31,6 @@
   .parking-details-modal-header h2 { font-size: 20px; }
   .parking-details-modal-facts { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 }
+.parking-location-sources ul { padding-left: 20px; font-size: 13px; line-height: 1.7; }
+.parking-location-sources li + li { margin-top: 8px; }
+.parking-location-sources a { color: var(--color-primary); overflow-wrap: anywhere; text-underline-offset: 3px; }

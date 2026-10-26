@@ -3,7 +3,7 @@ import { useMockParking } from './MockParkingContext'
 import { parkingAreas as parkingCatalog } from './parkingData'
 import { useParkingFavorites } from './ParkingFavorites'
 import ParkingDetailsModal from './ParkingDetailsModal'
-import ParkingDemoIllustration from './ParkingDemoIllustration'
+import ParkingLocationVisual from './ParkingLocationVisual'
 import './ParkingDiscovery.css'
 
 const availabilityOrder = { Available: 0, Limited: 1, Full: 2 }
@@ -47,7 +47,7 @@ export default function ParkingDiscovery() {
   return (
     <section className="parking-discovery" aria-labelledby="parking-heading">
       <h1 id="parking-heading" tabIndex={-1}>Browse Parking Areas</h1>
-      <p className="parking-demo-note">Demonstration data only. All locations and availability are fictional.</p>
+      <p className="parking-demo-note">Researched Davao City locations. All availability, vehicle options, slots, and reservations are simulated. No facility partnership or real booking is offered.</p>
 
       <form className="parking-filters" role="search" aria-label="Filter parking areas" onSubmit={(event) => event.preventDefault()}>
         <label className="parking-search">
@@ -97,15 +97,16 @@ export default function ParkingDiscovery() {
           {results.map((area) => {
             return (
               <article className="parking-card" key={area.id} aria-labelledby={`${area.id}-name`}>
-                <ParkingDemoIllustration facilityId={area.id} />
+                <ParkingLocationVisual />
                 <div className="parking-card-content">
                   <h2 id={`${area.id}-name`}>{area.name}</h2>
                   <p className="parking-location">{area.location}</p>
+                  <a className="parking-map-link" href={area.googleMapsUrl} target="_blank" rel="noopener noreferrer">Open in Google Maps<span className="parking-sr-only">: {area.name} (new tab)</span></a>
                   <button className="parking-favorite-save" type="button" aria-pressed={savedIds.includes(area.id)} onClick={() => toggleSaved(area.id)}>
                     {savedIds.includes(area.id) ? 'Unsave' : 'Save'}<span className="parking-sr-only"> {area.name}</span>
                   </button>
                   <dl className="parking-facts">
-                    <div><dt>Vehicles</dt><dd>{area.vehicles.join(', ')}</dd></div>
+                    <div><dt>Demo vehicles</dt><dd>{area.vehicles.join(', ')}</dd></div>
                     <div><dt>Mock status</dt><dd>{area.availability}</dd></div>
                   </dl>
                   <button className="parking-details-button" type="button" aria-haspopup="dialog" onClick={() => setSelectedArea(area)}>
