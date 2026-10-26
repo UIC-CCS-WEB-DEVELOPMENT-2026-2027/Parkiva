@@ -13,3 +13,4 @@
 @media (max-width: 400px) {
   .reservation-review dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+.reservation-review fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }

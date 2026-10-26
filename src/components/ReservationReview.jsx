@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react'
 import { validateReservationReview } from './reservationReviewValidation.js'
 import './ReservationReview.css'
 
-export default function ReservationReview({ facility, slots = [], selectedId, vehicle = {}, dateTime = {}, onEdit }) {
+export default function ReservationReview({ facility, slots = [], selectedId, vehicle = {}, dateTime = {}, onEdit, onConfirm, saving = false, saveError = '' }) {
   const id = useId()
   const feedbackRef = useRef(null)
   const [checked, setChecked] = useState(false)
@@ -13,12 +13,14 @@ export default function ReservationReview({ facility, slots = [], selectedId, ve
     event.preventDefault()
     const currentIssues = validateReservationReview({ facility, slots, selectedId, vehicle, dateTime })
     setChecked(currentIssues.length === 0)
+    if (currentIssues.length === 0 && onConfirm) onConfirm()
     feedbackRef.current?.focus()
   }
 
   return (
     <form className="reservation-review" onSubmit={checkReview} aria-label="Reservation review">
-      <p>Check your details before continuing. This is a frontend preview; no reservation will be made.</p>
+      <p>Check your details before confirming a simulated reservation. Demo data is saved in this browser only.</p>
+      <fieldset disabled={saving}>
       <section aria-labelledby={`${id}-facility`}>
         <h4 id={`${id}-facility`}>Parking facility and slot</h4>
         <dl>
@@ -53,11 +55,13 @@ export default function ReservationReview({ facility, slots = [], selectedId, ve
           <ul>{issues.map((issue, index) => <li key={`${issue.step}-${index}`}>
             <button type="button" onClick={() => onEdit(issue.step)}>{issue.message}</button>
           </li>)}</ul>
-        </> : checked && <p>Review complete. Preview only; no reservation has been made.</p>}
+        </> : checked && !onConfirm && <p>Review complete. Preview only; no reservation has been made.</p>}
+        {saveError && <p className="reservation-review-error" role="alert">{saveError}</p>}
       </div>
       <div className="reservation-flow-actions">
-        <button type="submit" className="reservation-flow-primary" disabled={issues.length > 0}>Continue (preview)</button>
+        <button type="submit" className="reservation-flow-primary" disabled={issues.length > 0 || saving}>{saving ? 'Saving demo reservation…' : onConfirm ? 'Confirm demo reservation' : 'Continue (preview)'}</button>
       </div>
+      </fieldset>
     </form>
   )
 }

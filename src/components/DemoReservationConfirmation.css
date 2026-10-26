@@ -1,0 +1,6 @@
+.demo-reservation-notice { padding: 12px; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-primary) !important; font-weight: 600; line-height: 1.6; }
+.demo-confirmation dl { font-size: 14px; line-height: 1.6; }
+.demo-confirmation dl div { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr); gap: 8px 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border); }
+.demo-confirmation dt { color: var(--color-text-muted); }
+.demo-confirmation dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 400px) { .demo-confirmation dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
