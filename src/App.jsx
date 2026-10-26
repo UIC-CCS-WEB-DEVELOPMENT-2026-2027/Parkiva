@@ -3,10 +3,12 @@ import './App.css'
 import ParkingDiscovery from './components/ParkingDiscovery'
 import Footer from './components/Footer'
 import ReservationHistory from './components/ReservationHistory'
+import DemoAuthForm from './components/DemoAuthForm'
 
 export default function App() {
   const [guestOpen, setGuestOpen] = useState(false)
-  const [notice, setNotice] = useState('')
+  const [demoSession, setDemoSession] = useState(null)
+  const [sessionNotice, setSessionNotice] = useState('')
   const [view, setView] = useState('browse')
   const guestRef = useRef(null)
   const guestButtonRef = useRef(null)
@@ -44,7 +46,13 @@ export default function App() {
     if (view === 'reservations') {
       document.getElementById('reservations-heading')?.focus()
     }
+    if (view === 'login' || view === 'register') document.getElementById('demo-auth-heading')?.focus()
   }, [view])
+
+  function openAuth(mode) {
+    setGuestOpen(false)
+    setView(mode)
+  }
 
   return (
     <div className="landing-page">
@@ -59,28 +67,32 @@ export default function App() {
             }}>
               <button className="nav-button guest-button" ref={guestButtonRef}
                 aria-expanded={guestOpen} aria-controls="guest-dropdown"
-                onClick={() => { setNotice(''); setGuestOpen(!guestOpen) }}>
+                onClick={() => setGuestOpen(!guestOpen)}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
                   <circle cx="12" cy="8" r="3.5" />
                   <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
                 </svg>
-                Guest
+                {demoSession ? 'Demo session' : 'Guest'}
                 <svg className="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
                   <path d="m4 6 4 4 4-4" />
                 </svg>
               </button>
               {guestOpen && <div className="guest-dropdown" id="guest-dropdown">
-                <button onClick={() => setNotice('Log In — Coming Soon')}>Log In</button>
-                <button onClick={() => setNotice('Register — Coming Soon')}>Register</button>
-                <p className="auth-notice" role="status">{notice}</p>
+                {demoSession ? <button onClick={() => { setDemoSession(null); setSessionNotice('Demo session ended. Browser-local reservations are unchanged.'); setGuestOpen(false); guestButtonRef.current?.focus() }}>End demo session</button> : <>
+                  <button onClick={() => openAuth('login')}>Log In</button>
+                  <button onClick={() => openAuth('register')}>Register</button>
+                </>}
               </div>}
             </div>
           </div>
         </nav>
+        <p className="demo-session-notice" role="status">{demoSession ? `Simulated session: ${demoSession.displayName}. This is not secure authentication. Reservations remain local to this browser, not account-linked.` : sessionNotice}</p>
       </header>
       <main className="discovery-main">
       <div hidden={view !== 'browse'}><ParkingDiscovery /></div>
       {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
+      {(view === 'login' || view === 'register') && <DemoAuthForm key={view} mode={view} onSwitch={openAuth} onBrowse={browse}
+        onComplete={(session) => { setDemoSession(session); setSessionNotice(''); browse() }} />}
       <section className="development" aria-labelledby="development-heading">
         <img className="parkiva-logo" src="/parkiva.png" alt="Parkiva logo" />
         <p className="tagline">Smarter Parking Starts Here.</p>
