@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { parkingAreas } from './parkingData'
 import { useParkingFavorites } from './ParkingFavorites'
+import ParkingDetailsModal from './ParkingDetailsModal'
 import './ParkingDiscovery.css'
 
 const availabilityOrder = { Available: 0, Limited: 1, Full: 2 }
@@ -10,7 +11,7 @@ export default function ParkingDiscovery() {
   const [vehicle, setVehicle] = useState('')
   const [availability, setAvailability] = useState('')
   const [sortBy, setSortBy] = useState('default')
-  const [expandedId, setExpandedId] = useState(null)
+  const [selectedArea, setSelectedArea] = useState(null)
   const { savedIds, toggleSaved } = useParkingFavorites(parkingAreas)
   const [savedOnly, setSavedOnly] = useState(false)
   const query = search.trim().toLowerCase()
@@ -35,7 +36,7 @@ export default function ParkingDiscovery() {
     setVehicle('')
     setAvailability('')
     setSortBy('default')
-    setExpandedId(null)
+    setSelectedArea(null)
     setSavedOnly(false)
   }
 
@@ -90,7 +91,6 @@ export default function ParkingDiscovery() {
       ) : (
         <div className="parking-grid">
           {results.map((area) => {
-            const expanded = expandedId === area.id
             return (
               <article className="parking-card" key={area.id} aria-labelledby={`${area.id}-name`}>
                 <div className="parking-placeholder" role="img" aria-label={`Image placeholder for ${area.name}`}>Parking image placeholder</div>
@@ -104,20 +104,16 @@ export default function ParkingDiscovery() {
                     <div><dt>Vehicles</dt><dd>{area.vehicles.join(', ')}</dd></div>
                     <div><dt>Mock status</dt><dd>{area.availability}</dd></div>
                   </dl>
-                  <button className="parking-details-button" type="button" aria-expanded={expanded} aria-controls={`${area.id}-details`} onClick={() => setExpandedId(expanded ? null : area.id)}>
-                    {expanded ? 'Close Details' : 'View Details'}<span className="parking-sr-only"> for {area.name}</span>
+                  <button className="parking-details-button" type="button" aria-haspopup="dialog" onClick={() => setSelectedArea(area)}>
+                    View Details<span className="parking-sr-only"> for {area.name}</span>
                   </button>
-                  <div className="parking-details" id={`${area.id}-details`} hidden={!expanded}>
-                    <p>{area.description}</p>
-                    <p>{area.access}</p>
-                    <p>Fictional example for demonstration only.</p>
-                  </div>
                 </div>
               </article>
             )
           })}
         </div>
       )}
+      {selectedArea && <ParkingDetailsModal area={selectedArea} onClose={() => setSelectedArea(null)} />}
     </section>
   )
 }

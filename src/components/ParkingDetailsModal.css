@@ -1,0 +1,33 @@
+.parking-details-modal {
+  width: min(560px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+.parking-details-modal::backdrop { background: rgb(9 37 80 / 55%); }
+.parking-details-modal-content { padding: 28px; overflow-wrap: anywhere; }
+.parking-details-modal-header { display: flex; align-items: start; gap: 16px; justify-content: space-between; }
+.parking-details-modal-header h2 { margin: 0; font-size: 24px; line-height: 1.35; letter-spacing: -0.02em; }
+.parking-details-modal-close { flex-shrink: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; cursor: pointer; }
+.parking-details-modal-close:hover { background: var(--color-background); }
+.parking-details-modal :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
+.parking-details-modal p { font-size: 14px; line-height: 1.65; color: var(--color-text-muted); }
+.parking-details-modal-location { margin: 12px 0 24px; }
+.parking-details-modal-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 0 0 24px; padding: 20px 0; border-block: 1px solid var(--color-border); font-size: 14px; line-height: 1.5; }
+.parking-details-modal-facts dt { color: var(--color-text-muted); }
+.parking-details-modal-facts dd { margin: 6px 0 0; font-weight: 600; }
+.parking-details-modal h3 { margin: 24px 0 8px; font-size: 16px; }
+.parking-details-modal section p { margin: 0; }
+.parking-details-modal-note { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--color-border); }
+@media (max-width: 600px) {
+  .parking-details-modal-content { padding: 20px; }
+  .parking-details-modal-header h2 { font-size: 20px; }
+  .parking-details-modal-facts { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}
