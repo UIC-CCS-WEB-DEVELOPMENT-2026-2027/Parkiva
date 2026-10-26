@@ -12,6 +12,7 @@ export default function ParkingDiscovery() {
   const [availability, setAvailability] = useState('')
   const [sortBy, setSortBy] = useState('default')
   const [selectedArea, setSelectedArea] = useState(null)
+  const [reservationDrafts, setReservationDrafts] = useState({})
   const { savedIds, toggleSaved } = useParkingFavorites(parkingAreas)
   const [savedOnly, setSavedOnly] = useState(false)
   const query = search.trim().toLowerCase()
@@ -113,7 +114,9 @@ export default function ParkingDiscovery() {
           })}
         </div>
       )}
-      {selectedArea && <ParkingDetailsModal area={selectedArea} onClose={() => setSelectedArea(null)} />}
+      {selectedArea && <ParkingDetailsModal area={selectedArea} reservationDraft={reservationDrafts[selectedArea.id]}
+        onDraftChange={(draft) => setReservationDrafts((previous) => ({ ...previous, [selectedArea.id]: draft }))}
+        onClose={() => setSelectedArea(null)} />}
     </section>
   )
 }
