@@ -64,6 +64,11 @@ h1 {
 .navbar { max-width: 1200px; margin-inline: auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .navbar-logo { width: 56px; height: 56px; }
 .nav-controls { display: flex; align-items: center; gap: 8px; }
+.nav-button[aria-current="page"] { font-weight: 600; }
+@media (max-width: 500px) {
+  .navbar { flex-wrap: wrap; }
+  .nav-controls { flex-wrap: wrap; justify-content: flex-end; flex: 1; }
+}
 .nav-button, .guest-dropdown button { font: inherit; font-size: 14px; color: var(--color-primary); background: transparent; border: 0; border-radius: 4px; cursor: pointer; min-height: 44px; padding: 10px 12px; }
 .nav-button:hover, .guest-dropdown button:hover { background: var(--color-background); }
 button:focus-visible, .development:focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
