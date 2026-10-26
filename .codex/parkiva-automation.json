@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "repository": "UIC-CCS-WEB-DEVELOPMENT-2026-2027/Parkiva",
-  "baseBranch": "main",
-  "requiredCheck": "build-and-test",
-  "setupStatus": "pending-verification",
-  "issueOrder": [5, 7, 9, 10, 12, 19, 20, 21, 22, 23, 26, 27, 28, 29, 30, 31, 32, 33],
-  "instructions": ".codex/SEQUENTIAL-DEVELOPMENT.md"
-}
