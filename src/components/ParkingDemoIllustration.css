@@ -1,0 +1,16 @@
+.parking-demo-visual { margin: 0; border-bottom: 1px solid var(--color-border); background: #edf2f5; }
+.parking-demo-scene { padding: 12px 20px 0; }
+.parking-demo-scene-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-text-muted); font-size: 12px; }
+.parking-demo-sign { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 3px; background: var(--color-primary); color: white; font-size: 16px; font-weight: 600; }
+.parking-demo-bays { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 54px; border-block: 2px solid #aebdc9; border-left: 2px solid #aebdc9; }
+.parking-demo-bay { display: grid; place-items: center; border-right: 2px solid #aebdc9; }
+.parking-demo-vehicle { position: relative; width: 62%; max-width: 26px; height: 38px; border: 2px solid #335882; border-radius: 6px; background: var(--color-surface); }
+.parking-demo-vehicle::before { content: ''; position: absolute; top: 7px; left: 3px; right: 3px; height: 9px; border-block: 2px solid #8aa2b9; }
+.parking-demo-bay:nth-child(3) .parking-demo-vehicle { background: #deeee8; border-color: #327d6a; }
+.parking-demo-lane { display: flex; justify-content: space-between; align-items: center; height: 30px; color: var(--color-text-muted); font-size: 11px; }
+.parking-demo-lane span:last-child { font-size: 20px; }
+.parking-demo-visual figcaption { padding: 8px 12px; border-top: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted); font-size: 11px; text-align: center; line-height: 1.4; }
+.parking-demo-visual--covered .parking-demo-scene { border-top: 5px solid #8aa2b9; padding-top: 7px; }
+.parking-demo-visual--motorcycles .parking-demo-vehicle { width: 12px; border-radius: 8px; background: var(--color-primary); }
+.parking-demo-visual--motorcycles .parking-demo-vehicle::before { left: -4px; right: -4px; height: 2px; border: 0; background: #335882; }
+.parking-demo-visual--square .parking-demo-bays { border-color: #8da99e; }

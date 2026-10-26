@@ -8,31 +8,9 @@
   background: var(--color-background);
 }
 .discovery-main { width: calc(100% - 48px); max-width: 1152px; }
-.discovery-main .development { width: 100%; max-width: none; margin: 0; padding-block: 32px 48px; border-top: 1px solid var(--color-border); }
-.discovery-main .parkiva-logo { width: 160px; }
-.discovery-main .development h2 { font-size: 26px; margin: 0; }
-.development {
-  width: calc(100% - 48px);
-  max-width: 620px;
-  margin-block: auto;
-  padding-block: 24px 48px;
-  text-align: center;
-}
-.parkiva-logo { width: clamp(200px, 48vw, 280px); height: auto; margin: 0 auto; }
-.tagline {
-  margin: 0;
-  color: var(--color-primary);
-  font-size: clamp(14px, 2.5vw, 17px);
-  font-weight: 500;
-  letter-spacing: 0.025em;
-}
-.accent-line {
-  width: 40px;
-  height: 3px;
-  margin: 30px auto;
-  border-radius: 2px;
-  background: var(--color-secondary);
-}
+.development { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 20px 0; margin-bottom: 20px; border-top: 1px solid var(--color-border); }
+.development h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; font-weight: 600; }
+.development p { margin: 0; color: var(--color-text-muted); font-size: 13px; line-height: 1.6; }
 h1 {
   margin: 0;
   font-size: clamp(30px, 5.5vw, 46px);
@@ -41,33 +19,20 @@ h1 {
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
-.description {
-  max-width: 460px;
-  margin: 20px auto 28px;
-  color: var(--color-text-muted);
-  font-size: clamp(15px, 2.4vw, 17px);
-  line-height: 1.75;
-  text-wrap: pretty;
-}
-.development-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 400;
-}
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-secondary); }
 
 .site-header { width: 100%; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
 .navbar { max-width: 1200px; margin-inline: auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .navbar-logo { width: 56px; height: 56px; }
-.nav-controls { display: flex; align-items: center; gap: 8px; }
+.nav-controls { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
 .nav-button[aria-current="page"] { font-weight: 600; }
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .navbar { flex-wrap: wrap; }
-  .nav-controls { flex-wrap: wrap; justify-content: flex-end; flex: 1; }
+  .navbar-logo { width: 48px; height: 48px; }
+  .nav-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1 1 100%; gap: 4px 12px; }
+  .nav-controls > .nav-button { text-align: left; }
+  .nav-button { font-size: 13px; padding-inline: 8px; }
+  .discovery-main { width: calc(100% - 32px); }
 }
 .nav-button, .guest-dropdown button { font: inherit; font-size: 14px; color: var(--color-primary); background: transparent; border: 0; border-radius: 4px; cursor: pointer; min-height: 44px; padding: 10px 12px; }
 .nav-button:hover, .guest-dropdown button:hover { background: var(--color-background); }
