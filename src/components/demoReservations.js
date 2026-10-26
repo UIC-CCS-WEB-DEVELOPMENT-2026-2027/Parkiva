@@ -1,6 +1,6 @@
 import { validateReservationReview } from './reservationReviewValidation.js'
 import { parkingSlotsByFacility } from './parkingSlotData.js'
-import { notifyDemoDataChanged, readMockSlotOverrides, applyMockSlotOverrides } from './mockSlotState.js'
+import { notifyDemoDataChanged, readMockSlotOverrides, applyMockSlotOverrides, currentMockSlots } from './mockSlotState.js'
 
 export const DEMO_RESERVATIONS_KEY = 'parkiva-demo-reservations-v1'
 export const DEMO_NOTICE = 'Demo Only — No Actual Parking Reservation Created.'
@@ -32,7 +32,8 @@ export function readDemoReservations(storage) {
   const raw = storage.getItem(DEMO_RESERVATIONS_KEY)
   if (raw === null) return []
   const data = JSON.parse(raw)
-  if (data?.version !== 1 || !Array.isArray(data.reservations) || !data.reservations.every(validRecord)) {
+  if (data?.version !== 1 || !Array.isArray(data.reservations) || !data.reservations.every(validRecord) ||
+      new Set(data.reservations.map((record) => record.reference)).size !== data.reservations.length) {
     throw new Error('Stored demo reservation data is invalid. It has not been overwritten.')
   }
   return data.reservations
@@ -85,9 +86,9 @@ export async function confirmDemoReservation(input, options = {}) {
     return await locks.request(DEMO_RESERVATIONS_KEY, () => {
       const now = options.now ?? new Date()
       const overrides = readMockSlotOverrides(storage, parkingSlotsByFacility)
-      const slots = applyMockSlotOverrides(input.facility.id, input.slots, overrides)
-      if (validateReservationReview({ ...input, slots }, now).length) return { ok: false, error: 'Your selection is no longer valid. Review the slot, date/time, and vehicle information.' }
       const records = readDemoReservations(storage)
+      const slots = currentMockSlots(input.facility.id, applyMockSlotOverrides(input.facility.id, input.slots, overrides), records, now)
+      if (validateReservationReview({ ...input, slots }, now).length) return { ok: false, error: 'Your selection is no longer valid. Review the slot, date/time, and vehicle information.' }
       const slot = input.slots.find((item) => item.id === input.selectedId)
       const candidate = {
         demo: true,
