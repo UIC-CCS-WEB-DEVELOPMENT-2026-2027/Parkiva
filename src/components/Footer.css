@@ -1,39 +1,89 @@
 .parkiva-footer {
-  width: min(100% - 32px, 540px);
-  margin: 0 auto;
-  color: var(--color-text-muted, #536477);
+  border-top: 1px solid var(--color-border);
+  background: #f7f9fa;
+  margin-top: 0;
+}
+.footer-content,
+.footer-bottom {
+  max-width: 1248px;
+  width: calc(100% - 80px);
+  margin-inline: auto;
+}
+.footer-content {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 50px;
+  padding: 40px 0 32px;
+}
+.footer-brand > strong {
+  font-size: 25px;
+  letter-spacing: -0.05em;
+  color: var(--color-primary);
+}
+.footer-brand > strong span {
+  color: var(--color-secondary);
+}
+.footer-content p {
+  margin: 12px 0;
   font-size: 12px;
-  line-height: 1.7;
-  text-align: center;
+  color: #5b6b77;
 }
-
-.parkiva-footer p {
-  margin: 0;
+.footer-content small {
+  font-size: 10px;
+  color: #5b6b77;
 }
-
-.parkiva-footer__description {
+.footer-content h2 {
+  font-size: 12px;
+  margin: 5px 0 10px;
+  letter-spacing: 0;
+}
+.footer-content button {
+  display: block;
+  padding: 6px 0;
+  min-height: 34px;
+  font-size: 11px;
+  border: 0;
+  color: #536878;
+  background: none;
+  text-align: left;
+}
+.footer-content a {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.footer-bottom {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  column-gap: 5px;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0 24px;
+  border-top: 1px solid var(--color-border);
+  color: #627480;
+  font-size: 10px;
+  line-height: 1.8;
 }
-
-.parkiva-footer__name {
-  color: var(--color-primary, #022664);
-  font-weight: 600;
+@media (max-width: 760px) {
+  .footer-content,
+  .footer-bottom {
+    width: calc(100% - 40px);
+  }
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+  }
+  .footer-brand {
+    grid-column: 1/-1;
+  }
+  .footer-brand p {
+    margin-block: 10px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 6px;
+  }
 }
-
-.parkiva-footer__separator {
-  color: var(--color-secondary, #05997e);
-}
-
-.parkiva-footer__team {
-  margin-top: 4px !important;
-}
-
-@media (max-width: 375px) {
-  .parkiva-footer {
-    width: calc(100% - 32px);
-    font-size: 11px;
+@media (max-width: 350px) {
+  .footer-content {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,11 +1,10 @@
 # Parkiva [Visit Us!](https://prkiva.vercel.app)
 
-**Smart Parking. Simple Reservations.**
+**Find your spot in Davao.**
 
-Parkiva is a student-built frontend demonstration of a Public Parking Reservation and Management System.
+Parkiva is a Davao parking marketplace preview for drivers, neighborhood hosts and parking businesses.
 
-**Demo Only — No Actual Parking Reservation Created.** Facility names and locations are researched in Davao City; slot layouts, vehicle options, availability, reservations, and entry/exit checks are simulated. No facility partnership is implied. The demo has no backend, database, real authentication, or connection to parking facilities.
-
+**Demo Only — No Actual Parking Reservation Created.** Real venues use researched Davao City names and locations. Private-space listings and their hosts are fictional. All inventory, prices, hours, reservations and entry/exit checks are simulated. No facility partnership is implied. The preview has no backend, database, real authentication, payment processing or connection to parking facilities.
 
 ## Development Workflow
 
@@ -40,6 +39,7 @@ flowchart TB
     class QA1,QA2,QA3,QA4 qa
     class ISSUES issues
 ```
+
 ### Project Management
 
 Development tasks, feature requests, and QA reports are
@@ -57,44 +57,45 @@ tracked using GitHub Issues and GitHub Projects.
 - Help operators monitor occupancy and reservations.
 - Provide an organized parking experience for drivers and operators.
 
-## Implemented Demo Features
+## Implemented Marketplace Experience
 
-The frontend currently includes:
+- Guest-first discovery with neighborhood shortcuts, location and visit-time search, vehicle, covered/open-air, illustrative price and availability filters, sorting, and saved listings.
+- Eight researched real Davao locations plus three clearly fictional private/independent spaces. Host-created fictional listings appear in public discovery in the same browser.
+- Licensed local representative parking photos, gallery controls, photographer credits, and an original illustration if an image cannot load. These photos do not claim to show a listed facility.
+- Rich listing details with factual source links, host context, preview rates/amenities/hours, entrance information, rules, Maps links and a four-step reservation panel.
+- Available-only bay selection, date/time and vehicle validation, editable review, retained drafts while navigating, unique preview references, and no payment step.
+- My Reservations with upcoming/active/past/cancelled filters, vehicle details, QR passes, and confirmation before cancelling an upcoming visit.
+- A driver home with preloaded favorites, vehicle information and reservation history.
+- A host workspace with assigned training inventory and fictional properties, add/edit forms, safe local persistence, illustrative prices/hours, and Available/Reserved/Occupied/Unavailable bay management.
+- Host QR lookup by camera on supported browsers or manual reference entry. Scheduled entry, late exit, duplicate-use prevention and occupancy release are simulated against the original reservation record.
+- Two public role accounts with quick-fill, field validation, password visibility, login/logout, browser history navigation and identifier-only sessions. Registration demonstrates the interface without creating accounts.
 
-- Eight researched Davao City parking locations with source citations and Google Maps search links, plus search, demo vehicle/status filters, sorting, and browser-saved favorites.
-- Responsive facility details with clearly labeled photo placeholders. No copyrighted Google Maps photos are copied or scraped.
-- Available-only slot selection, date/time validation, and vehicle information checked against the facility and selected slot.
-- Editable review steps that retain selections, followed by simulated confirmation with a unique demo reference.
-- Browser-local reservation storage and overlap checks for the same slot or vehicle, with safe handling of unavailable or corrupted storage.
-- My Reservations with details, time-based statuses, and confirmed cancellation of upcoming demo reservations.
-- QR passes containing only a demo reference, with simulated entry during the scheduled time window and exit after recorded entry. These are not secure access credentials; no camera scanning or real gate integration is implemented.
-- An operator simulation with facility summaries, Available/Reserved/Occupied counts, demo records, and persisted mock slot edits shared with public browsing in that demo workspace. Editing requires the operator demo role and is limited to its fictional assignment list; guests and drivers see a read-only preview.
-- Two preconfigured demo role accounts with quick-fill, credential validation, password visibility, login/logout, and an identifier-only session that survives refresh. Registration remains an interface demonstration and creates no additional account. Password fields use only the public sample credentials and are never persisted or sent to a server.
+Personal favorites and reservation histories retain separate guest/driver/operator keys. Effective inventory and conflict checks now consider all three workspaces in this browser, so a host can verify a driver's pass without copying that reservation into its own history. Pass updates are written back to the original workspace. Assigned real venues remain fictional training assignments, never claimed business ownership.
 
-Reservations and favorites belong to this browser's site storage, not to a securely authenticated account. Guest, driver, and operator workspaces use separate storage keys; switching roles does not transfer reservations, favorites, or status edits between them. Existing guest data is retained. Different profiles, devices, or site addresses do not share data. Clearing site data removes it. Multiple tabs share the current demo session and changes where supported; saving reservations, cancellations, verification, and slot edits requires browser storage and Web Locks. No server verifies or protects this data.
+Existing guest data, researched IDs and historical reservation snapshots are retained. Earlier guest slot edits are read as a fallback; newer host edits take priority. Missing data produces empty states; malformed storage is reported and preserved. Saving reservations, cancellations, pass transitions, inventory and listings requires localStorage and Web Locks. Different devices, profiles and site addresses do not share data. Clearing browser site data removes the preview records.
 
 ### Public Demo Accounts
 
-| Demo role | Email | Public sample password |
-| --- | --- | --- |
-| Driver | driver@parkiva.demo | DriverDemo123! |
-| Parking Operator | operator@parkiva.demo | OperatorDemo123! |
+| Demo role        | Email                 | Public sample password |
+| ---------------- | --------------------- | ---------------------- |
+| Driver           | driver@parkiva.demo   | DriverDemo123!         |
+| Parking Operator | operator@parkiva.demo | OperatorDemo123!       |
 
-The driver workspace starts with saved real Davao locations and upcoming, past, and cancelled mock reservations. The operator workspace starts with mock occupancy and reservations assigned to Aldevinco Pay Parking, SM City Davao Parking, and SM Lanang Premier Parking for this exercise only. The operator account does **not** own or manage those facilities in the real world. Public discovery remains available without login. Seed data is added only when an account's storage is absent, so subsequent logins do not reset edits or cancellations.
+The driver workspace starts with saved real Davao locations and upcoming, past, and cancelled mock reservations. The host workspace starts with mock occupancy and training assignments for Aldevinco Pay Parking, SM City Davao Parking, and SM Lanang Premier Parking, plus fictional private/independent listings. The operator account does **not** own or manage those facilities in the real world. Public discovery remains available without login. Seed data is added only when an account's storage is absent, so subsequent logins do not reset edits or cancellations.
 
 Only the demo account identifier is stored as session data. These public credentials and frontend role checks are visible and editable in the browser; they provide no security or real staff authorization. Use no real credentials.
 
 ## How Parkiva Works
 
-The working demo journey is:
+The working preview journey is:
 
-1. Browse the researched Davao City location listings without logging in, then open View Details. Real-world admission, opening hours, and fees must be confirmed directly; none are promised by Parkiva.
-2. Select an available mock slot, choose a future arrival and later same-day departure, and enter demo vehicle information.
-3. Review the details or go back to edit them without losing the other valid selections.
-4. Confirm the simulation. A demo reference and snapshot are saved in this browser after validation and local conflict checks.
-5. View the demo pass from confirmation or My Reservations. Its entry/exit buttons use the browser's local clock and stored records; they never grant real access.
-6. Use My Reservations to inspect records or confirm cancellation of an upcoming demo reservation.
-7. Open Operator Demo to explore local slot statuses. Current reservation windows appear Reserved; recorded entry without exit appears Occupied. Future bookings stay in the records, and manual edits do not cancel reservations.
+1. Explore Davao parking as a guest, compare illustrative prices and spaces, save a shortlist and view location sources.
+2. Pick a bay, choose a future same-day visit within the listing's preview hours, and enter example vehicle details.
+3. Review or edit any step, then confirm a simulated reservation. No payment or real parking booking occurs.
+4. Open the reference and QR pass from confirmation or My Reservations.
+5. Switch to the public host account in the same browser, choose Verify a pass, and enter the reference or use a supported camera.
+6. Practice check-in during the visit window, then check-out to complete the visit and release the simulated bay.
+7. Return as a driver to see the updated pass/history, or cancel another upcoming visit with confirmation.
 
 ## Future Backend Functionality
 
@@ -122,4 +123,6 @@ Parkiva uses its own visual identity and `parkiva.png` as the official project l
 
 Names, location evidence, research date, and public sources are recorded with each listing. See [research notes](docs/davao-parking-research.md). Google Maps links open a location search, not a guaranteed parking entrance. No real capacity, fee, operating hours, or reservation partnership is supplied.
 
-No authorized Google Places photo integration or exact-location reusable photo license is configured, so all listings use explicit placeholders. No private API keys or remote photo requests are added. Retired fictional favorite IDs are removed instead of being assigned to real facilities. Earlier demo reservation snapshots remain unchanged in My Reservations; old mock status overrides are ignored rather than transferred to new locations.
+No authorized location-specific photo integration is configured. Licensed, locally served Pexels photos are explicitly representative; see [photo sources and license](public/images/ATTRIBUTION.md). No Google Maps images are copied, no private keys are exposed, and runtime browsing makes no remote image requests. Hosts may choose a JPG/PNG/WebP up to 2 MB for the current tab only; uploads are never stored in localStorage and disappear on refresh or logout.
+
+Retired fictional favorite IDs are removed instead of being assigned to real facilities. Earlier reservation snapshots retain their original location identity. [Design research](docs/marketplace-design-research.md) documents the references and frontend limitations. The persistent marketplace-preview notice and contextual confirmation/login/verification disclosures keep the simulation clear without repeating banners on every card.

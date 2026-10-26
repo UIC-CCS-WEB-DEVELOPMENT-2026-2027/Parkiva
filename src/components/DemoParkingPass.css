@@ -1,23 +1,204 @@
-.demo-parking-pass { margin-top: 20px; padding: 16px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); min-width: 0; overflow-wrap: anywhere; }
-.demo-parking-pass h3 { margin: 0 0 12px; font-size: 18px; }
-.demo-parking-pass p { font-size: 14px; line-height: 1.6; }
-.demo-parking-pass .demo-pass-warning { color: var(--color-primary); font-weight: 600; }
-.demo-parking-pass dl { margin: 16px 0; font-size: 14px; line-height: 1.6; }
-.demo-parking-pass dl div { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr); gap: 8px 16px; padding: 6px 0; }
-.demo-parking-pass dt { color: var(--color-text-muted); }
-.demo-parking-pass dd { margin: 0; }
-.demo-pass-qr { margin: 20px 0; text-align: center; }
-.demo-pass-qr svg { display: block; width: 200px; max-width: 100%; height: auto; margin: 0 auto; background: white; }
-.demo-pass-qr code { font-size: 12px; overflow-wrap: anywhere; }
-.demo-parking-pass label { display: block; margin-bottom: 8px; font-size: 14px; }
-.demo-parking-pass input { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid var(--color-border); border-radius: 4px; font: inherit; font-size: 14px; color: var(--color-text); background: var(--color-surface); }
-.demo-parking-pass button { min-height: 44px; max-width: 100%; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 14px; cursor: pointer; }
-.demo-parking-pass button:hover { background: var(--color-background); }
-.demo-parking-pass button:disabled { opacity: 0.6; cursor: not-allowed; }
-.demo-pass-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
-.demo-parking-pass .demo-pass-error { color: #a32626; }
-.demo-parking-pass :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
-@media (max-width: 400px) {
-  .demo-parking-pass dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
-  .demo-pass-actions button { flex: 1 1 100%; }
+.demo-parking-pass {
+  margin-top: 24px;
+  border: 1px solid #bfcfdd;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+}
+.pass-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  color: white;
+  background: var(--color-primary);
+}
+.pass-header > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.pass-header h3 {
+  margin: 0 !important;
+  font-size: 15px !important;
+  color: white;
+}
+.pass-header > span {
+  font-size: 9px;
+  padding: 4px 7px;
+  border: 1px solid #ffffff66;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.pass-body {
+  padding: 22px;
+}
+.pass-body h4 {
+  margin: 15px 0 8px;
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+.pass-address {
+  margin: 0 0 20px;
+  font-size: 11px !important;
+  color: var(--color-text-muted);
+}
+.pass-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin: 22px 0;
+}
+.demo-pass-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 160px;
+}
+.demo-pass-qr svg {
+  display: block;
+  width: min(100%, 200px);
+  height: auto;
+  background: white;
+}
+.demo-pass-qr small {
+  display: block;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.pass-main dl {
+  flex: 1;
+  min-width: 130px;
+  margin: 0;
+}
+.pass-main dl > div {
+  display: block;
+  padding: 6px 0;
+}
+.pass-main dt {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.pass-main dd {
+  font-size: 12px;
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.pass-reference {
+  border-block: 1px dashed #bdcdd9;
+  padding: 15px 0 9px;
+}
+.pass-reference > span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.pass-reference code {
+  display: block;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.pass-reference button {
+  font-size: 11px;
+}
+.pass-body p.pass-disclosure,
+.pass-timestamps {
+  font-size: 10px !important;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+.pass-practice {
+  margin-top: 16px;
+  font-size: 11px;
+}
+.pass-practice summary {
+  color: var(--color-primary);
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 1.5;
+}
+.pass-practice p {
+  font-size: 11px;
+}
+.pass-practice label {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 11px;
+}
+.pass-practice input {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+}
+.demo-pass-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.demo-pass-actions button {
+  font-size: 11px;
+}
+.pass-footer {
+  padding: 0 20px 15px;
+}
+.pass-footer > button {
+  font-size: 10px;
+}
+.demo-pass-error {
+  color: #a02c2c !important;
+  font-size: 12px;
+  padding-inline: 12px;
+}
+.pass-unavailable {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 15px;
+  background: #f5f7f9;
+  padding: 20px;
+  border-radius: 5px;
+}
+.pass-unavailable p {
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .pass-header {
+    padding: 14px 12px;
+    gap: 7px;
+  }
+  .pass-header h3 {
+    font-size: 13px !important;
+  }
+  .pass-header > div {
+    gap: 7px;
+  }
+  .pass-body {
+    padding: 18px 14px;
+  }
+  .pass-main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .pass-main dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .pass-main dt {
+    font-size: 9px;
+  }
+  .pass-main dd {
+    font-size: 11px;
+  }
 }

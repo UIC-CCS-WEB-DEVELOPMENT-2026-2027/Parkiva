@@ -2,7 +2,11 @@ import { useId, useState } from 'react'
 import ParkingSlot from './ParkingSlot'
 import './ParkingSlotSelection.css'
 
-export default function ParkingSlotSelection({ slots = [], selectedId: controlledId, onSelectionChange }) {
+export default function ParkingSlotSelection({
+  slots = [],
+  selectedId: controlledId,
+  onSelectionChange,
+}) {
   const headingId = useId()
   const [localId, setLocalId] = useState(null)
   const selectedId = controlledId === undefined ? localId : controlledId
@@ -20,26 +24,53 @@ export default function ParkingSlotSelection({ slots = [], selectedId: controlle
   return (
     <section className="parking-slot-selection" aria-labelledby={headingId}>
       <h3 id={headingId}>Choose a parking slot</h3>
-      <p>Synthetic demo slots, not the facility’s real bay numbers or capacity. Selecting one does not reserve a real space.</p>
+      <p>Choose an available bay in this illustrative layout.</p>
       <ul className="parking-slot-legend" aria-label="Slot status legend">
-        {['Available', 'Reserved', 'Occupied'].map((status) => (
-          <li key={status}><span className={`parking-slot-key parking-slot-key--${status.toLowerCase()}`} aria-hidden="true" />{status}</li>
+        {['Available', 'Reserved', 'Occupied', 'Unavailable'].map((status) => (
+          <li key={status}>
+            <span
+              className={`parking-slot-key parking-slot-key--${status.toLowerCase()}`}
+              aria-hidden="true"
+            />
+            {status}
+          </li>
         ))}
       </ul>
-      {slots.length === 0 ? <p>No slot information is available for this facility.</p> : (
+      {slots.length === 0 ? (
+        <p>No slot information is available for this facility.</p>
+      ) : (
         <>
-          <p className="parking-slot-count">{availableCount} of {slots.length} slots available</p>
-          {availableCount === 0 && <p>No available slots at this facility. Reserved and occupied slots cannot be selected.</p>}
+          <p className="parking-slot-count">
+            {availableCount} of {slots.length} slots available
+          </p>
+          {availableCount === 0 && (
+            <p>
+              No available slots at this facility. Reserved and occupied slots cannot be selected.
+            </p>
+          )}
           <div className="parking-slot-grid" role="group" aria-label="Parking slots">
-            {slots.map((slot) => <ParkingSlot key={slot.id} slot={slot} selected={selectedSlot?.id === slot.id} onSelect={selectSlot} />)}
+            {slots.map((slot) => (
+              <ParkingSlot
+                key={slot.id}
+                slot={slot}
+                selected={selectedSlot?.id === slot.id}
+                onSelect={selectSlot}
+              />
+            ))}
           </div>
         </>
       )}
       <div className="parking-slot-summary">
         <p role="status" aria-live="polite" aria-atomic="true">
-          {selectedSlot ? `Selected slot: ${selectedSlot.id} (${selectedSlot.vehicle})` : 'No slot selected.'}
+          {selectedSlot
+            ? `Selected slot: ${selectedSlot.id} (${selectedSlot.vehicle})`
+            : 'No slot selected.'}
         </p>
-        {selectedSlot && <button className="parking-slot-clear" type="button" onClick={() => setSelectedId(null)}>Clear selection</button>}
+        {selectedSlot && (
+          <button className="parking-slot-clear" type="button" onClick={() => setSelectedId(null)}>
+            Clear selection
+          </button>
+        )}
       </div>
     </section>
   )

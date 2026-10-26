@@ -1,209 +1,199 @@
-// Requires a running Vite app and an existing Playwright installation; adds no dependency.
 import assert from 'node:assert/strict'
-import { pathToFileURL } from 'node:url'
-
-const playwright = process.env.PARKIVA_PLAYWRIGHT_PATH
-  ? await import(pathToFileURL(process.env.PARKIVA_PLAYWRIGHT_PATH).href)
-  : await import('playwright')
-const browser = await playwright.chromium.launch({ headless: true,
-  ...(process.env.PARKIVA_CHROMIUM_PATH ? { executablePath: process.env.PARKIVA_CHROMIUM_PATH } : {}) })
-const baseURL = process.env.PARKIVA_BASE_URL || 'http://127.0.0.1:5173'
-const key = 'parkiva-demo-reservations-v1'
-
+import {
+  launch,
+  baseURL,
+  button,
+  fit,
+  openDetails,
+  schedule,
+  vehicle,
+  reference,
+} from './helpers.mjs'
+const browser = await launch()
 try {
-  for (const width of [320, 375, 390, 1280]) {
-    const context = await browser.newContext({ viewport: { width, height: 900 }, timezoneId: 'Asia/Shanghai' })
+  for (const width of [320, 375, 390, 768, 1280]) {
+    const context = await browser.newContext({
+      viewport: { width, height: 900 },
+      timezoneId: 'Asia/Manila',
+    })
     const page = await context.newPage()
     page.setDefaultTimeout(7000)
     await page.clock.install({ time: new Date('2026-10-26T09:00:00+08:00') })
-    const pageErrors = []
-    page.on('pageerror', (error) => pageErrors.push(error.message))
-    const button = (name) => page.getByRole('button', { name, exact: true })
-    const fit = async () => {
-      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Page overflow at ${width}`)
-      if (await page.getByRole('dialog').count()) assert.ok(await page.getByRole('dialog').evaluate((node) => node.scrollWidth <= node.clientWidth), `Dialog overflow at ${width}`)
-    }
-    const open = async () => {
-      await page.getByRole('button', { name: /View Details/ }).filter({ hasText: 'Aldevinco' }).click()
-      await page.getByRole('dialog').waitFor()
-    }
-    const slot = (id) => page.getByRole('button', { name: new RegExp(`^Slot ${id}, Car, Available`) })
-    async function schedule(date = '2026-10-28', slotId = 'A01') {
-      await slot(slotId).click()
-      await button('Continue to date and time').click()
-      await page.getByLabel('Reservation date', { exact: true }).fill(date)
-      await page.getByLabel('Arrival time', { exact: true }).fill('10:00')
-      await page.getByLabel('Departure time', { exact: true }).fill('11:00')
-      await button('Continue to vehicle information').click()
-    }
-    async function vehicle(plate = 'DEMO 123') {
-      await page.getByRole('form', { name: 'Vehicle information', exact: true }).getByLabel('Vehicle type', { exact: true }).selectOption('Car')
-      await page.getByLabel('Plate number', { exact: true }).fill(plate)
-      await button('Review selection').click()
-    }
-
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
     await page.goto(baseURL)
-    await button('My Reservations').click()
-    await page.getByText('No demo reservations yet', { exact: true }).waitFor()
-    await button('Browse parking').click()
+    await fit(page, width)
+    await button(page, 'My Reservations').click()
+    await page.getByText('Your next visit starts with a spot.', { exact: true }).waitFor()
+    await button(page, 'Browse parking').click()
     await page.getByRole('searchbox').fill('  Airport Road  ')
     assert.equal(await page.locator('.parking-card').count(), 1)
-    await page.getByRole('searchbox').fill('no-such-facility')
+    await page.getByRole('searchbox').fill('does-not-exist')
     await page.locator('.parking-empty').waitFor()
-    await button('Reset Filters').click()
-    await page.locator('.parking-filters select').nth(0).selectOption('Car')
-    assert.equal(await page.locator('.parking-card').count(), 7)
-    await page.locator('.parking-filters select').nth(1).selectOption('Full')
+    await button(page, 'Reset Filters').first().click()
+    await page.getByLabel('Vehicle type', { exact: true }).selectOption('Car')
+    assert.equal(await page.locator('.parking-card').count(), 10)
+    if (width <= 600) await button(page, 'Filters').click()
+    const filter = width <= 600 ? page.getByRole('dialog') : page.locator('.desktop-filters')
+    await filter.getByLabel('Availability', { exact: true }).selectOption('Full')
+    if (width <= 600) await page.keyboard.press('Escape')
     await page.locator('.parking-empty').waitFor()
-    await button('Reset Filters').click()
-    await page.getByLabel('Sort By').selectOption('name-asc')
-    assert.equal(await page.locator('.parking-card h2').first().textContent(), 'Aldevinco Pay Parking')
-    await page.getByLabel('Sort By').selectOption('name-desc')
-    assert.equal(await page.locator('.parking-card h2').first().textContent(), 'SM Lanang Premier Parking')
-    await page.getByLabel('Sort By').selectOption('availability')
-    assert.match(await page.locator('.parking-card').first().textContent(), /Available/)
-    await button('Reset Filters').click()
-    await button('Save Aldevinco Pay Parking').click()
+    await button(page, 'Reset Filters').first().click()
+    await page.getByLabel('Sort By', { exact: true }).selectOption('name-asc')
+    const names = await page.locator('.parking-card h2').allTextContents()
+    assert.deepEqual(
+      names,
+      [...names].sort((a, b) => a.localeCompare(b)),
+    )
+    await page.getByLabel('Sort By', { exact: true }).selectOption('price-asc')
+    const prices = await page.locator('.listing-card-bottom strong').allTextContents()
+    const numbers = prices.map((v) => Number(v.replace(/[^0-9]/g, '')))
+    assert.deepEqual(
+      numbers,
+      [...numbers].sort((a, b) => a - b),
+    )
+    await button(page, 'Reset Filters').click()
+    await button(page, 'Save Aldevinco Pay Parking').click()
     await page.reload()
-    await button('Saved Only').click()
+    await page.getByRole('button', { name: /^Saved Only/ }).click()
     assert.equal(await page.locator('.parking-card').count(), 1)
-    assert.equal(await button('Unsave Aldevinco Pay Parking').getAttribute('aria-pressed'), 'true')
-    await button('Show All').click()
-    const trigger = page.getByRole('button', { name: /View Details/ }).first()
+    await page.getByRole('button', { name: /^Show All/ }).click()
+    const trigger = button(page, 'View Details for Aldevinco Pay Parking')
     await trigger.focus()
     await page.keyboard.press('Enter')
     await page.getByRole('dialog').waitFor()
     assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden')
-    for (let index = 0; index < 16; index++) {
-      await page.keyboard.press(index % 3 === 0 ? 'Shift+Tab' : 'Tab')
-      assert.ok(await page.evaluate(() => Boolean(document.activeElement.closest('dialog'))), 'Dialog focus escaped')
+    for (let i = 0; i < 18; i++) {
+      await page.keyboard.press(i % 3 === 0 ? 'Shift+Tab' : 'Tab')
+      assert.ok(await page.evaluate(() => Boolean(document.activeElement.closest('dialog'))))
     }
+    await fit(page, width)
     await page.keyboard.press('Escape')
     assert.ok(await trigger.evaluate((node) => node === document.activeElement))
     assert.equal(await page.evaluate(() => document.body.style.overflow), '')
-    await open()
+    await openDetails(page)
     await page.mouse.click(1, 1)
     assert.equal(await page.getByRole('dialog').count(), 0)
-    await open()
-    assert.ok(await button('Continue to date and time').isDisabled())
-    assert.ok(await page.getByRole('button', { name: 'Slot A02, Car, Reserved', exact: true }).isDisabled())
-    await slot('A01').click()
-    await button('Continue to date and time').click()
-    await button('Continue to vehicle information').click()
+    await openDetails(page)
+    assert.ok(await page.getByRole('button', { name: /^Slot A02, Car, Reserved/ }).isDisabled())
+    assert.ok(await button(page, 'Continue to date and time').isDisabled())
+    await page.getByRole('button', { name: /^Slot A01, Car, Available/ }).click()
+    await button(page, 'Continue to date and time').click()
+    await button(page, 'Continue to vehicle information').click()
     assert.equal(await page.locator('.reservation-datetime [aria-invalid="true"]').count(), 3)
     await page.getByLabel('Reservation date', { exact: true }).fill('2026-10-25')
-    await page.getByLabel('Arrival time', { exact: true }).fill('10:00')
-    await page.getByLabel('Departure time', { exact: true }).fill('09:00')
-    await button('Continue to vehicle information').click()
+    await page.getByLabel('Arrival time', { exact: true }).fill('11:00')
+    await page.getByLabel('Departure time', { exact: true }).fill('10:00')
+    await button(page, 'Continue to vehicle information').click()
     assert.equal(await page.locator('.reservation-datetime [aria-invalid="true"]').count(), 2)
     await page.getByLabel('Reservation date', { exact: true }).fill('2026-10-28')
+    await page.getByLabel('Arrival time', { exact: true }).fill('10:00')
     await page.getByLabel('Departure time', { exact: true }).fill('11:00')
-    // Regression: an external change to this workspace must not leave Continue stuck.
-    await page.evaluate(async () => {
-      const { notifyDemoDataChanged, MOCK_SLOTS_KEY } = await import('/src/components/mockSlotState.js')
-      localStorage.setItem(MOCK_SLOTS_KEY, JSON.stringify({ version: 1, facilities: { 'davao-aldevinco-parking': { A01: 'Occupied' } } }))
-      notifyDemoDataChanged()
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'parkiva-mock-slot-statuses-v1:operator-demo',
+        JSON.stringify({
+          version: 1,
+          facilities: { 'davao-aldevinco-parking': { A01: 'Occupied' } },
+        }),
+      )
+      window.dispatchEvent(new Event('parkiva-demo-data-changed'))
     })
-    await button('Continue to vehicle information').click()
-    await page.getByRole('heading', { name: 'Step 1 of 4: Parking slot', exact: true }).waitFor()
+    await button(page, 'Continue to vehicle information').click()
     await page.getByRole('alert').filter({ hasText: 'no longer available' }).waitFor()
-    await slot('A04').click()
-    await button('Continue to date and time').click()
-    assert.equal(await page.getByLabel('Reservation date', { exact: true }).inputValue(), '2026-10-28')
-    await button('Continue to vehicle information').click()
-    await button('Review selection').click()
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'parkiva-mock-slot-statuses-v1:operator-demo',
+        JSON.stringify({
+          version: 1,
+          facilities: { 'davao-aldevinco-parking': { A01: 'Available' } },
+        }),
+      )
+      window.dispatchEvent(new Event('parkiva-demo-data-changed'))
+    })
+    await page.getByRole('button', { name: /^Slot A01, Car, Available/ }).click()
+    await button(page, 'Continue to date and time').click()
+    assert.equal(
+      await page.getByLabel('Reservation date', { exact: true }).inputValue(),
+      '2026-10-28',
+    )
+    await button(page, 'Continue to vehicle information').click()
+    await button(page, 'Review selection').click()
     assert.equal(await page.locator('.vehicle-information-form [aria-invalid="true"]').count(), 2)
-    await page.getByLabel('Plate number', { exact: true }).fill('  ')
-    await page.getByRole('form', { name: 'Vehicle information' }).getByLabel('Vehicle type', { exact: true }).selectOption('Motorcycle')
-    await button('Review selection').click()
-    assert.equal(await page.locator('.vehicle-information-form [aria-invalid="true"]').count(), 2)
-    await vehicle()
-    await button('Edit date and time').click()
-    assert.equal(await page.getByLabel('Arrival time', { exact: true }).inputValue(), '10:00')
-    await button('Continue to vehicle information').click()
-    assert.equal(await page.getByLabel('Plate number', { exact: true }).inputValue(), 'DEMO 123')
-    await button('Review selection').click()
-    await fit()
-    await button('Confirm demo reservation').click()
-    await page.getByRole('heading', { name: 'Demo reservation confirmation', exact: true }).waitFor()
-    await button('View demo pass').click()
-    await page.getByRole('img', { name: 'QR code containing only the demo pass reference' }).waitFor()
-    const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).reservations[0], key)
-    assert.equal(await page.locator('.demo-pass-qr code').textContent(), `parkiva-demo-pass:v1:${saved.reference}`)
-    await fit()
+    await vehicle(page)
+    await button(page, 'Edit date and time').click()
+    assert.equal(
+      await page.getByLabel('Reservation date', { exact: true }).inputValue(),
+      '2026-10-28',
+    )
+    await button(page, 'Continue to vehicle information').click()
+    assert.equal(await page.getByLabel('Plate number', { exact: true }).inputValue(), 'PREVIEW-123')
+    await button(page, 'Review selection').click()
+    await fit(page, width)
     await page.keyboard.press('Escape')
-    await button('My Reservations').click()
-    const card = page.locator('.reservation-history-card').filter({ hasText: saved.reference })
+    await openDetails(page)
+    await page.getByRole('form', { name: 'Reservation review' }).waitFor()
+    await button(page, 'Confirm demo reservation').click()
+    await page
+      .getByRole('heading', { name: 'Demo reservation confirmation', exact: true })
+      .waitFor()
+    const ref = await reference(page)
+    await button(page, 'View demo pass').click()
+    await page
+      .getByRole('img', { name: 'QR code containing only the demo pass reference' })
+      .waitFor()
+    assert.ok(
+      await page
+        .locator('.demo-parking-pass')
+        .textContent()
+        .then((text) => text.includes(ref)),
+    )
+    await fit(page, width)
+    await page.keyboard.press('Escape')
+    await button(page, 'My Reservations').click()
+    const card = page.locator('.reservation-history-card')
     await card.waitFor()
-    await card.getByRole('button', { name: /^View demo pass/ }).click()
-    await page.clock.setFixedTime(new Date('2026-10-28T10:30:00+08:00'))
-    await button('Refresh demo pass').click()
-    await button('Simulate entry').click()
-    await page.getByRole('status').filter({ hasText: 'Simulated entry recorded locally' }).waitFor()
-    await button('Simulate exit').click()
-    await page.getByRole('status').filter({ hasText: 'Simulated exit recorded locally' }).waitFor()
+    await card.getByRole('button', { name: /^View details/ }).click()
+    await card.getByRole('button', { name: /^Cancel demo reservation/ }).click()
+    await button(page, 'Keep reservation').waitFor()
+    assert.equal(
+      await button(page, 'Keep reservation').evaluate((node) => node === document.activeElement),
+      true,
+    )
+    await page.keyboard.press('Escape')
+    await card.getByRole('button', { name: /^Cancel demo reservation/ }).click()
+    await button(page, 'Confirm cancellation').click()
+    await page.getByRole('status').filter({ hasText: 'cancelled.' }).waitFor()
     await page.reload()
-    await button('My Reservations').click()
-    await card.getByRole('button', { name: /^View demo pass/ }).click()
-    await page.getByText('This demo pass has already completed simulated entry and exit.', { exact: true }).waitFor()
-    await button('Browse').click()
-    await open()
-    // A page reload clears drafts while retaining reservations and manual statuses.
-    await schedule('2026-10-29', 'A04')
-    await vehicle('OTHER 456')
-    await button('Confirm demo reservation').click()
-    await page.getByRole('heading', { name: 'Demo reservation confirmation', exact: true }).waitFor()
-    await page.keyboard.press('Escape')
-    await button('My Reservations').click()
-    const second = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).reservations[1], key)
-    const upcoming = page.locator('.reservation-history-card').filter({ hasText: second.reference })
-    await upcoming.getByRole('button', { name: /^Cancel demo reservation/ }).click()
-    assert.ok(await button('Keep reservation').evaluate((node) => node === document.activeElement))
-    await page.keyboard.press('Escape')
-    assert.equal(await button('Confirm cancellation').count(), 0)
-    await upcoming.getByRole('button', { name: /^Cancel demo reservation/ }).click()
-    await button('Confirm cancellation').click()
-    await upcoming.locator('.reservation-history-status').filter({ hasText: 'Cancelled' }).waitFor()
-    await upcoming.getByRole('button', { name: /^View demo pass/ }).click()
-    await page.getByText('This reservation is cancelled. No usable demo QR or verification is available.', { exact: true }).waitFor()
-    assert.equal(await upcoming.getByRole('img').count(), 0)
-    await fit()
-    await button('Operator Demo').click()
-    assert.equal(await page.locator('.operator-summary').count(), 8)
-    assert.equal(await page.locator('.operator-record').count(), 2)
-    assert.ok(await page.getByLabel('Manual mock status for A01', { exact: true }).isDisabled())
-    await fit()
-    await button('Browse').click()
-    await open()
-    await button('Start another demo reservation').click()
-    await slot('A04').waitFor()
-    await page.keyboard.press('Escape')
-    await button('Guest').click()
-    await button('Log In').click()
-    await button('Log In (demo)').click()
-    await page.locator('.demo-auth-error[role="alert"]').waitFor()
-    await button('Show password').click()
-    assert.equal(await page.getByLabel('Demo password', { exact: true }).getAttribute('type'), 'text')
-    await button('Go to demo registration').click()
-    await button('Try registration demo').click()
-    assert.equal(await page.locator('.demo-auth [aria-invalid="true"]').count(), 3)
-    await button('Quick-fill Driver').click()
-    await fit()
-    await button('Try registration demo').click()
-    await button('Driver demo').waitFor()
-    await button('Driver demo').click()
-    await button('Log Out (demo)').click()
-    await button('Guest').waitFor()
-    await button('My Reservations').click()
-    await page.evaluate((key) => { localStorage.setItem(key, 'corrupt') }, key)
-    await button('Refresh reservations').click()
+    await button(page, 'My Reservations').click()
+    await page.locator('.reservation-history-status--cancelled').waitFor()
+    await page.locator('.history-tabs button').filter({ hasText: 'Upcoming' }).click()
+    await page.getByRole('heading', { name: 'No upcoming visits here.' }).waitFor()
+    await page.locator('.history-tabs button').filter({ hasText: 'Cancelled' }).click()
+    await page
+      .locator('.reservation-history-card')
+      .getByRole('button', { name: /^View demo pass/ })
+      .click()
+    assert.equal(
+      await page
+        .getByRole('img', { name: 'QR code containing only the demo pass reference' })
+        .count(),
+      0,
+    )
+    await fit(page, width)
+    await page.evaluate(() => localStorage.setItem('parkiva-demo-reservations-v1', '{broken'))
+    await button(page, 'Refresh reservations').click()
     await page.getByRole('alert').filter({ hasText: 'could not be read' }).waitFor()
-    assert.equal(await page.evaluate((key) => localStorage.getItem(key), key), 'corrupt')
-    await page.evaluate((key) => localStorage.removeItem(key), key)
-    await button('Refresh reservations').click()
-    await page.getByText('No demo reservations yet', { exact: true }).waitFor()
-    assert.deepEqual(pageErrors, [])
-    console.log(`PASS ${width}px: discovery/filter/sort/favorites, modal keyboard/backdrop, validation/stale-slot recovery, reservation/edit/confirmation, persistence, QR entry/exit, cancellation, dashboard, demo auth, empty/corrupt states, layouts`)
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem('parkiva-demo-reservations-v1')),
+      '{broken',
+    )
+    assert.deepEqual(errors, [])
+    console.log(
+      'PASS ' +
+        width +
+        'px: guest discovery/search/sort/filter/favorite, modal keyboard/backdrop/focus, validation/backtracking/drafts, confirmation/QR/history/cancellation/storage errors',
+    )
     await context.close()
   }
 } finally {

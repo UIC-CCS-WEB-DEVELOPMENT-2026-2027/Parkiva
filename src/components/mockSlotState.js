@@ -1,7 +1,8 @@
 import { canManageDemoFacility, getDemoStorage } from './demoAccounts.js'
+import { readHostListings, editableFacility } from './hostListings.js'
 export const MOCK_SLOTS_KEY = 'parkiva-mock-slot-statuses-v1'
 export const DEMO_DATA_EVENT = 'parkiva-demo-data-changed'
-export const SLOT_STATUSES = ['Available', 'Reserved', 'Occupied']
+export const SLOT_STATUSES = ['Available', 'Reserved', 'Occupied', 'Unavailable']
 
 export function notifyDemoDataChanged() {
   if (typeof window !== 'undefined') window.dispatchEvent(new Event(DEMO_DATA_EVENT))
@@ -11,16 +12,42 @@ export function readMockSlotOverrides(storage, catalog) {
   const raw = storage.getItem(MOCK_SLOTS_KEY)
   if (raw === null) return {}
   const data = JSON.parse(raw)
-  if (data?.version !== 1 || !data.facilities || typeof data.facilities !== 'object' || Array.isArray(data.facilities)) throw Error('Invalid mock slot data')
+  if (
+    data?.version !== 1 ||
+    !data.facilities ||
+    typeof data.facilities !== 'object' ||
+    Array.isArray(data.facilities)
+  )
+    throw Error('Invalid mock slot data')
   for (const [facilityId, slots] of Object.entries(data.facilities)) {
     if (retiredParkingIds.includes(facilityId)) continue
-    if (!catalog[facilityId] || !slots || typeof slots !== 'object' || Array.isArray(slots)) throw Error('Invalid mock facility')
+    if (!catalog[facilityId] || !slots || typeof slots !== 'object' || Array.isArray(slots))
+      throw Error('Invalid mock facility')
     for (const [slotId, status] of Object.entries(slots)) {
-      if (!catalog[facilityId].some((slot) => slot.id === slotId) || !SLOT_STATUSES.includes(status)) throw Error('Invalid mock slot')
+      if (
+        !catalog[facilityId].some((slot) => slot.id === slotId) ||
+        !SLOT_STATUSES.includes(status)
+      )
+        throw Error('Invalid mock slot')
     }
   }
   // Never reassign an old fictional facility's overrides to a real location.
-  return Object.fromEntries(Object.entries(data.facilities).filter(([id]) => !retiredParkingIds.includes(id)))
+  return Object.fromEntries(
+    Object.entries(data.facilities).filter(([id]) => !retiredParkingIds.includes(id)),
+  )
+}
+
+// Retain earlier guest inventory as a fallback. New host edits take precedence;
+// old keys are never reassigned to a different location or deleted.
+export function readSharedMockOverrides(storage, catalog) {
+  const legacy = readMockSlotOverrides(getDemoStorage(storage, null), catalog)
+  const shared = readMockSlotOverrides(getDemoStorage(storage, 'operator-demo'), catalog)
+  return Object.fromEntries(
+    [...new Set([...Object.keys(legacy), ...Object.keys(shared)])].map((id) => [
+      id,
+      { ...legacy[id], ...shared[id] },
+    ]),
+  )
 }
 
 export function applyMockSlotOverrides(facilityId, slots, overrides) {
@@ -29,15 +56,32 @@ export function applyMockSlotOverrides(facilityId, slots, overrides) {
 
 export function currentMockSlots(facilityId, slots, records, now = new Date()) {
   return slots.map((slot) => {
-    const relevant = records.filter((record) => record.facility.id === facilityId && record.slot.id === slot.id && record.status !== 'cancelled' && !record.pass?.exitedAt)
+    const relevant = records.filter(
+      (record) =>
+        record.facility.id === facilityId &&
+        record.slot.id === slot.id &&
+        record.status !== 'cancelled' &&
+        !record.pass?.exitedAt,
+    )
     const occupied = relevant.some((record) => Boolean(record.pass?.enteredAt))
-    const reserved = relevant.some((record) => new Date(`${record.dateTime.date}T${record.dateTime.arrival}`) <= now && now < new Date(`${record.dateTime.date}T${record.dateTime.departure}`))
-    return { ...slot, status: occupied || slot.status === 'Occupied' ? 'Occupied' : reserved ? 'Reserved' : slot.status }
+    const reserved = relevant.some(
+      (record) =>
+        new Date(`${record.dateTime.date}T${record.dateTime.arrival}`) <= now &&
+        now < new Date(`${record.dateTime.date}T${record.dateTime.departure}`),
+    )
+    return {
+      ...slot,
+      status:
+        occupied || slot.status === 'Occupied' ? 'Occupied' : reserved ? 'Reserved' : slot.status,
+    }
   })
 }
 
 export function mockSlotCounts(slots) {
-  return slots.reduce((counts, slot) => ({ ...counts, [slot.status]: counts[slot.status] + 1 }), { Available: 0, Reserved: 0, Occupied: 0 })
+  return slots.reduce(
+    (counts, slot) => ({ ...counts, [slot.status]: (counts[slot.status] || 0) + 1 }),
+    { Available: 0, Reserved: 0, Occupied: 0, Unavailable: 0 },
+  )
 }
 
 export function mockFacilityAvailability(slots) {
@@ -47,21 +91,46 @@ export function mockFacilityAvailability(slots) {
 
 export async function saveMockSlotStatus(facilityId, slotId, status, catalog, options = {}) {
   try {
-    if (!catalog[facilityId]?.some((slot) => slot.id === slotId) || !SLOT_STATUSES.includes(status)) return { ok: false, error: 'Choose a known facility, slot, and mock status.' }
-    const storage = options.storage ?? getDemoStorage()
-    if (!canManageDemoFacility(options.accountId ?? storage.accountId, facilityId)) return { ok: false, error: 'Only the operator demo account can edit facilities in its assigned simulation list. No real management rights are granted.' }
+    if (!catalog[facilityId]?.some((slot) => slot.id === slotId) || !SLOT_STATUSES.includes(status))
+      return { ok: false, error: 'Choose a known facility, slot, and mock status.' }
+    const current = options.storage ?? getDemoStorage()
+    const ownedIds = options.storage
+      ? []
+      : [...Object.keys(catalog)].filter((id) =>
+          editableFacility(id, readHostListings(globalThis.localStorage).listings),
+        )
+    if (!canManageDemoFacility(options.accountId ?? current.accountId, facilityId, ownedIds))
+      return {
+        ok: false,
+        error:
+          'Only the operator demo account can edit facilities in its assigned simulation list. No real management rights are granted.',
+      }
+    const storage = options.storage ?? getDemoStorage(globalThis.localStorage, 'operator-demo')
     const locks = options.locks ?? globalThis.navigator?.locks
-    if (!locks?.request) return { ok: false, error: 'Browser storage and Web Locks are required to save mock changes.' }
+    if (!locks?.request)
+      return {
+        ok: false,
+        error: 'Browser storage and Web Locks are required to save mock changes.',
+      }
     // Share the reservation lock so confirmations see the latest slot changes.
     return await locks.request('parkiva-demo-reservations-v1', () => {
-      const previous = readMockSlotOverrides(storage, catalog)
-      const facilities = { ...previous, [facilityId]: { ...previous[facilityId], [slotId]: status } }
+      const previous = options.storage
+        ? readMockSlotOverrides(storage, catalog)
+        : readSharedMockOverrides(globalThis.localStorage, catalog)
+      const facilities = {
+        ...previous,
+        [facilityId]: { ...previous[facilityId], [slotId]: status },
+      }
       storage.setItem(MOCK_SLOTS_KEY, JSON.stringify({ version: 1, facilities }))
       notifyDemoDataChanged()
       return { ok: true }
     })
   } catch {
-    return { ok: false, error: 'Mock status could not be saved. Storage may be unavailable, full, or invalid. Existing data has not been replaced.' }
+    return {
+      ok: false,
+      error:
+        'Mock status could not be saved. Storage may be unavailable, full, or invalid. Existing data has not been replaced.',
+    }
   }
 }
 import { retiredParkingIds } from './parkingData.js'
