@@ -12,6 +12,14 @@ function validRecord(record) {
   if (!record || !text(record.reference) || record.demo !== true || !text(record.confirmedAt) || Number.isNaN(Date.parse(record.confirmedAt))) return false
   if (record.status !== undefined && !['confirmed', 'cancelled'].includes(record.status)) return false
   if (record.status === 'cancelled' && (!text(record.cancelledAt) || Number.isNaN(Date.parse(record.cancelledAt)))) return false
+  if (record.pass !== undefined) {
+    const pass = record.pass
+    if (!pass || typeof pass !== 'object' || Array.isArray(pass)) return false
+    for (const key of ['enteredAt', 'exitedAt']) {
+      if (pass[key] !== undefined && (!text(pass[key]) || Number.isNaN(Date.parse(pass[key])))) return false
+    }
+    if (pass.exitedAt && (!pass.enteredAt || Date.parse(pass.exitedAt) < Date.parse(pass.enteredAt))) return false
+  }
   const { facility, slot, dateTime, vehicle } = record
   if (!facility || !slot || !dateTime || !vehicle || !text(facility.id) || !text(facility.name) || !text(facility.location) || !text(slot.id) || !text(slot.vehicle)) return false
   if (!text(vehicle.type) || !text(vehicle.plate) || typeof vehicle.model !== 'string' || !['date', 'arrival', 'departure'].every((key) => typeof dateTime[key] === 'string')) return false
