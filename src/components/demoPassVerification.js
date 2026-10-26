@@ -1,4 +1,5 @@
 import { DEMO_RESERVATIONS_KEY, readDemoReservations } from './demoReservations.js'
+import { notifyDemoDataChanged } from './mockSlotState.js'
 
 const prefix = 'parkiva-demo-pass:v1:'
 export function demoPassToken(reference) {
@@ -42,6 +43,7 @@ export async function verifyDemoPass(token, action, options = {}) {
       const updated = { ...record, pass: { ...pass, [action === 'entry' ? 'enteredAt' : 'exitedAt']: now.toISOString() } }
       const next = records.map((item) => item.reference === reference ? updated : item)
       storage.setItem(DEMO_RESERVATIONS_KEY, JSON.stringify({ version: 1, reservations: next }))
+      notifyDemoDataChanged()
       return { ok: true, reservation: updated, message: `Simulated ${action} recorded locally. No real access was granted.` }
     })
   } catch {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { parkingAreas } from './parkingData'
+import { useMockParking } from './MockParkingContext'
+import { parkingAreas as parkingCatalog } from './parkingData'
 import { useParkingFavorites } from './ParkingFavorites'
 import ParkingDetailsModal from './ParkingDetailsModal'
 import './ParkingDiscovery.css'
@@ -7,13 +8,14 @@ import './ParkingDiscovery.css'
 const availabilityOrder = { Available: 0, Limited: 1, Full: 2 }
 
 export default function ParkingDiscovery() {
+  const { areas: parkingAreas } = useMockParking()
   const [search, setSearch] = useState('')
   const [vehicle, setVehicle] = useState('')
   const [availability, setAvailability] = useState('')
   const [sortBy, setSortBy] = useState('default')
   const [selectedArea, setSelectedArea] = useState(null)
   const [reservationDrafts, setReservationDrafts] = useState({})
-  const { savedIds, toggleSaved } = useParkingFavorites(parkingAreas)
+  const { savedIds, toggleSaved } = useParkingFavorites(parkingCatalog)
   const [savedOnly, setSavedOnly] = useState(false)
   const query = search.trim().toLowerCase()
   const results = parkingAreas.filter((area) =>
@@ -114,7 +116,7 @@ export default function ParkingDiscovery() {
           })}
         </div>
       )}
-      {selectedArea && <ParkingDetailsModal area={selectedArea} reservationDraft={reservationDrafts[selectedArea.id]}
+      {selectedArea && <ParkingDetailsModal area={parkingAreas.find((area) => area.id === selectedArea.id)} reservationDraft={reservationDrafts[selectedArea.id]}
         onDraftChange={(draft) => setReservationDrafts((previous) => ({ ...previous, [selectedArea.id]: draft }))}
         onClose={() => setSelectedArea(null)} />}
     </section>

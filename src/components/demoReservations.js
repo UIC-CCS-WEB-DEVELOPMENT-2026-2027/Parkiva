@@ -1,4 +1,6 @@
 import { validateReservationReview } from './reservationReviewValidation.js'
+import { parkingSlotsByFacility } from './parkingSlotData.js'
+import { notifyDemoDataChanged, readMockSlotOverrides, applyMockSlotOverrides } from './mockSlotState.js'
 
 export const DEMO_RESERVATIONS_KEY = 'parkiva-demo-reservations-v1'
 export const DEMO_NOTICE = 'Demo Only — No Actual Parking Reservation Created.'
@@ -65,6 +67,7 @@ export async function cancelDemoReservation(reference, options = {}) {
       const updated = { ...records[index], status: 'cancelled', cancelledAt: now.toISOString() }
       const next = records.map((record, position) => position === index ? updated : record)
       storage.setItem(DEMO_RESERVATIONS_KEY, JSON.stringify({ version: 1, reservations: next }))
+      notifyDemoDataChanged()
       return { ok: true, reservation: updated }
     })
   } catch {
@@ -81,7 +84,9 @@ export async function confirmDemoReservation(input, options = {}) {
     if (!locks?.request) return { ok: false, error: 'This browser cannot safely save demo reservations. Try a browser with local storage and Web Locks enabled.' }
     return await locks.request(DEMO_RESERVATIONS_KEY, () => {
       const now = options.now ?? new Date()
-      if (validateReservationReview(input, now).length) return { ok: false, error: 'Your selection is no longer valid. Review the slot, date/time, and vehicle information.' }
+      const overrides = readMockSlotOverrides(storage, parkingSlotsByFacility)
+      const slots = applyMockSlotOverrides(input.facility.id, input.slots, overrides)
+      if (validateReservationReview({ ...input, slots }, now).length) return { ok: false, error: 'Your selection is no longer valid. Review the slot, date/time, and vehicle information.' }
       const records = readDemoReservations(storage)
       const slot = input.slots.find((item) => item.id === input.selectedId)
       const candidate = {
@@ -96,6 +101,7 @@ export async function confirmDemoReservation(input, options = {}) {
       if (hasDemoConflict(records, candidate)) return { ok: false, error: 'A stored demo reservation overlaps this slot or vehicle at that time. Choose another slot, vehicle, or time.' }
       if (records.some((record) => record.reference === candidate.reference)) return { ok: false, error: 'Could not generate a unique demo reference. Please try again.' }
       storage.setItem(DEMO_RESERVATIONS_KEY, JSON.stringify({ version: 1, reservations: [...records, candidate] }))
+      notifyDemoDataChanged()
       return { ok: true, reservation: candidate }
     })
   } catch {

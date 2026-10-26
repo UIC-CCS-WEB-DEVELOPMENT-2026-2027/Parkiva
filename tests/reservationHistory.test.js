@@ -13,7 +13,7 @@ function setup() {
   let pending = Promise.resolve()
   return {
     now: new Date(2026, 9, 26), createId: () => `history-${++id}`,
-    storage: { getItem: () => raw, setItem: (_, value) => { raw = value } },
+    storage: { getItem: (key) => key === DEMO_RESERVATIONS_KEY ? raw : null, setItem: (_, value) => { raw = value } },
     locks: { request: (_, callback) => { const next = pending.then(callback); pending = next.catch(() => {}); return next } },
   }
 }
@@ -58,7 +58,7 @@ test('rejects corrupt data and cancellation write failures without changing stor
   options.storage.setItem(DEMO_RESERVATIONS_KEY, null)
   const first = await confirmDemoReservation(input, options)
   const raw = options.storage.getItem(DEMO_RESERVATIONS_KEY)
-  const brokenStorage = { getItem: () => raw, setItem() { throw Error('Quota exceeded') } }
+  const brokenStorage = { getItem: (key) => key === DEMO_RESERVATIONS_KEY ? raw : null, setItem() { throw Error('Quota exceeded') } }
   assert.equal((await cancelDemoReservation(first.reservation.reference, { ...options, storage: brokenStorage })).ok, false)
   assert.equal(options.storage.getItem(DEMO_RESERVATIONS_KEY), raw)
   assert.equal((await cancelDemoReservation(first.reservation.reference, { ...options, locks: {} })).ok, false)

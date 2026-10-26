@@ -4,8 +4,14 @@ import ParkingDiscovery from './components/ParkingDiscovery'
 import Footer from './components/Footer'
 import ReservationHistory from './components/ReservationHistory'
 import DemoAuthForm from './components/DemoAuthForm'
+import { MockParkingProvider } from './components/MockParkingContext'
+import OperatorDashboard from './components/OperatorDashboard'
 
 export default function App() {
+  return <MockParkingProvider><ParkivaApp /></MockParkingProvider>
+}
+
+function ParkivaApp() {
   const [guestOpen, setGuestOpen] = useState(false)
   const [demoSession, setDemoSession] = useState(null)
   const [sessionNotice, setSessionNotice] = useState('')
@@ -47,6 +53,7 @@ export default function App() {
       document.getElementById('reservations-heading')?.focus()
     }
     if (view === 'login' || view === 'register') document.getElementById('demo-auth-heading')?.focus()
+    if (view === 'operator') document.getElementById('operator-dashboard-heading')?.focus()
   }, [view])
 
   function openAuth(mode) {
@@ -62,6 +69,7 @@ export default function App() {
           <div className="nav-controls">
             <button className="nav-button" onClick={browse} aria-current={view === 'browse' ? 'page' : undefined}>Browse</button>
             <button className="nav-button" aria-current={view === 'reservations' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('reservations') }}>My Reservations</button>
+            <button className="nav-button" aria-current={view === 'operator' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('operator') }}>Operator Demo</button>
             <div className="guest-control" ref={guestRef} onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) setGuestOpen(false)
             }}>
@@ -91,6 +99,7 @@ export default function App() {
       <main className="discovery-main">
       <div hidden={view !== 'browse'}><ParkingDiscovery /></div>
       {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
+      {view === 'operator' && <OperatorDashboard onBrowse={browse} />}
       {(view === 'login' || view === 'register') && <DemoAuthForm key={view} mode={view} onSwitch={openAuth} onBrowse={browse}
         onComplete={(session) => { setDemoSession(session); setSessionNotice(''); browse() }} />}
       <section className="development" aria-labelledby="development-heading">

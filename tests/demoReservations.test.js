@@ -12,7 +12,7 @@ function setup() {
   let raw = null
   let counter = 0
   let pending = Promise.resolve()
-  const storage = { getItem: () => raw, setItem: (_, value) => { raw = value } }
+  const storage = { getItem: (key) => key === DEMO_RESERVATIONS_KEY ? raw : null, setItem: (_, value) => { raw = value } }
   const locks = { request: (_, callback) => { const result = pending.then(callback); pending = result.catch(() => {}); return result } }
   return { storage, locks, now: new Date(2026, 9, 26), createId: () => `test-${++counter}` }
 }
