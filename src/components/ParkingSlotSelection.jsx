@@ -2,9 +2,14 @@ import { useId, useState } from 'react'
 import ParkingSlot from './ParkingSlot'
 import './ParkingSlotSelection.css'
 
-export default function ParkingSlotSelection({ slots = [] }) {
+export default function ParkingSlotSelection({ slots = [], selectedId: controlledId, onSelectionChange }) {
   const headingId = useId()
-  const [selectedId, setSelectedId] = useState(null)
+  const [localId, setLocalId] = useState(null)
+  const selectedId = controlledId === undefined ? localId : controlledId
+  function setSelectedId(id) {
+    setLocalId(id)
+    onSelectionChange?.(id)
+  }
   const selectedSlot = slots.find((slot) => slot.id === selectedId && slot.status === 'Available')
   const availableCount = slots.filter((slot) => slot.status === 'Available').length
 
