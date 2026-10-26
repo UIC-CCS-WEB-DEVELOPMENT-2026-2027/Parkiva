@@ -1,3 +1,4 @@
+import { getDemoStorage, isDemoStorageEvent } from './demoAccounts'
 import { useEffect, useId, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { DEMO_NOTICE, DEMO_RESERVATIONS_KEY, demoReservationStatus, readDemoReservations } from './demoReservations'
@@ -16,7 +17,7 @@ export default function DemoParkingPass({ reference, revision }) {
 
   function refresh() {
     try {
-      const matches = readDemoReservations(window.localStorage).filter((item) => item.reference === reference)
+      const matches = readDemoReservations(getDemoStorage()).filter((item) => item.reference === reference)
       if (matches.length !== 1) throw new Error('Not found')
       demoPassToken(reference)
       setRecord(matches[0])
@@ -32,7 +33,7 @@ export default function DemoParkingPass({ reference, revision }) {
     refresh()
     try { setTokenInput(demoPassToken(reference)) } catch { setTokenInput('') }
     setFeedback(null)
-    const sync = (event) => { if (event.key === DEMO_RESERVATIONS_KEY || event.key === null) { setFeedback(null); refresh() } }
+    const sync = (event) => { if (isDemoStorageEvent(event.key, DEMO_RESERVATIONS_KEY)) { setFeedback(null); refresh() } }
     window.addEventListener('storage', sync)
     window.addEventListener('focus', refresh)
     const interval = window.setInterval(refresh, 30000)

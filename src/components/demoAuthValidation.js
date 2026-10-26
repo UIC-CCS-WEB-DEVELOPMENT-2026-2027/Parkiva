@@ -1,5 +1,3 @@
-export const DEMO_PASSWORD = 'parkiva-demo'
-
 export function validateDemoAuth(value, mode) {
   const errors = {}
   if (mode === 'register' && !value.name.trim()) errors.name = 'Enter a demo display name.'

@@ -9,6 +9,7 @@ function setup() {
   const data = new Map()
   let pending = Promise.resolve()
   return {
+    accountId: 'operator-demo',
     storage: { getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) },
     locks: { request: (_, callback) => { const next = pending.then(callback); pending = next.catch(() => {}); return next } },
     now: new Date(2026, 9, 26),

@@ -4,9 +4,14 @@ import { parkingSlotsByFacility } from './parkingSlotData'
 import { demoReservationStatus, DEMO_NOTICE } from './demoReservations'
 import { mockSlotCounts, saveMockSlotStatus, SLOT_STATUSES } from './mockSlotState'
 import './OperatorDashboard.css'
+import { useDemoAccount } from './DemoAccountContext'
+import { OPERATOR_DEMO_FACILITIES } from './demoAccounts'
 
-export default function OperatorDashboard({ onBrowse }) {
-  const { areas, records, now, slotsByFacility, manualSlots, slotError, reservationError, refresh } = useMockParking()
+export default function OperatorDashboard({ onBrowse, onLogin }) {
+  const { account } = useDemoAccount()
+  const { areas: allAreas, records, now, slotsByFacility, manualSlots, slotError, reservationError, refresh } = useMockParking()
+  const operator = account?.id === 'operator-demo'
+  const areas = operator ? allAreas.filter((area) => OPERATOR_DEMO_FACILITIES.includes(area.id)) : allAreas
   const [facilityId, setFacilityId] = useState(areas[0].id)
   const [saving, setSaving] = useState(false)
   const savingRef = useRef(false)
@@ -16,7 +21,7 @@ export default function OperatorDashboard({ onBrowse }) {
   const reservations = records.filter((record) => record.facility.id === facilityId)
 
   async function changeStatus(slotId, status) {
-    if (savingRef.current) return
+    if (savingRef.current || !operator || !OPERATOR_DEMO_FACILITIES.includes(facilityId)) return
     savingRef.current = true
     setSaving(true)
     setMessage('')
@@ -31,7 +36,8 @@ export default function OperatorDashboard({ onBrowse }) {
   return (
     <section className="operator-dashboard" aria-labelledby="operator-dashboard-heading">
       <h1 id="operator-dashboard-heading" tabIndex={-1}>Mock parking operator dashboard</h1>
-      <p className="operator-demo-notice">Simulation only — publicly accessible, with no staff authorization or secure access. All changes affect demo data in this browser only.</p>
+      <p className="operator-demo-notice">Simulation only — no staff authorization or secure access. Assigned facilities are a fictional training list; this account does not own or manage these real places. Changes affect this demo account’s browser-local workspace only.</p>
+      {!operator && <p>This dashboard is read only for guests and drivers. <button type="button" onClick={onLogin}>Use operator demo login</button></p>}
       <p>{DEMO_NOTICE}</p>
       <div className="operator-actions"><button type="button" onClick={onBrowse}>Browse parking</button><button type="button" onClick={refresh}>Refresh dashboard</button></div>
       {(slotError || reservationError) && <div role="alert" className="operator-error">{slotError && <p>{slotError}</p>}{reservationError && <p>{reservationError}</p>}</div>}
@@ -54,7 +60,7 @@ export default function OperatorDashboard({ onBrowse }) {
         return <div className="operator-slot" key={`${facilityId}-${slot.id}`}>
           <h3>{slot.id} · {slot.vehicle}</h3><p>Current simulated status: <strong>{effective}</strong></p>
           <label htmlFor={`operator-${facilityId}-${slot.id}`}>Manual mock status for {slot.id}</label>
-          <select id={`operator-${facilityId}-${slot.id}`} value={slot.status} disabled={saving || Boolean(slotError)} onChange={(event) => changeStatus(slot.id, event.target.value)}>{SLOT_STATUSES.map((status) => <option key={status}>{status}</option>)}</select>
+          <select id={`operator-${facilityId}-${slot.id}`} value={slot.status} disabled={!operator || saving || Boolean(slotError)} onChange={(event) => changeStatus(slot.id, event.target.value)}>{SLOT_STATUSES.map((status) => <option key={status}>{status}</option>)}</select>
         </div>
       })}</div>
       <p role="status" aria-live="polite">{saving ? 'Saving mock change…' : message}</p>

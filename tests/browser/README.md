@@ -10,4 +10,6 @@ The suite covers search, combined filters, sorting, favorites after reload, moda
 
 The Davao listing suite also checks source and Maps links, explicit photo placeholders, absence of remote photo requests, safe retirement of fictional favorites and slot overrides, and unchanged historical reservation snapshots. It does not treat working map searches as live availability or verified entrances.
 
+The role-account suite checks both public sample credential pairs, quick-fill and invalid login handling, seeded driver/operator dashboards, identifier-only session persistence, favorites and reservation isolation, scoped confirmation/QR passes, cancellation retention, assigned-facility write guards, cross-tab logout, and storage failure handling at the same four widths. No real credentials or user browser profile are used.
+
 Supplementary storage unit tests cover cross-tab-style locking, quota/denied-storage failures, invalid data, duplicate references, and conflict prevention. These checks do not establish real availability, secure authentication, or real access control.

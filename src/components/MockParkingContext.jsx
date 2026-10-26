@@ -1,3 +1,4 @@
+import { getDemoStorage, isDemoStorageEvent } from './demoAccounts'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { parkingAreas } from './parkingData'
 import { parkingSlotsByFacility } from './parkingSlotData'
@@ -10,15 +11,15 @@ export function MockParkingProvider({ children }) {
   const [snapshot, setSnapshot] = useState({ overrides: {}, records: [], slotError: '', reservationError: '', now: new Date() })
   function refresh() {
     const next = { overrides: {}, records: [], slotError: '', reservationError: '', now: new Date() }
-    try { next.overrides = readMockSlotOverrides(window.localStorage, parkingSlotsByFacility) }
+    try { next.overrides = readMockSlotOverrides(getDemoStorage(), parkingSlotsByFacility) }
     catch { next.slotError = 'Mock slot changes could not be read. Original example statuses are shown; saving is blocked until storage is readable.' }
-    try { next.records = readDemoReservations(window.localStorage) }
+    try { next.records = readDemoReservations(getDemoStorage()) }
     catch { next.reservationError = 'Demo reservation storage could not be read. Reservation counts may be incomplete. Stored data has not been changed.' }
     setSnapshot(next)
   }
   useEffect(() => {
     refresh()
-    const sync = (event) => { if ([MOCK_SLOTS_KEY, DEMO_RESERVATIONS_KEY, null].includes(event.key)) refresh() }
+    const sync = (event) => { if (isDemoStorageEvent(event.key, MOCK_SLOTS_KEY) || isDemoStorageEvent(event.key, DEMO_RESERVATIONS_KEY)) refresh() }
     window.addEventListener('storage', sync)
     window.addEventListener(DEMO_DATA_EVENT, refresh)
     window.addEventListener('focus', refresh)

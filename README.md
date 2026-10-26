@@ -68,10 +68,21 @@ The frontend currently includes:
 - Browser-local reservation storage and overlap checks for the same slot or vehicle, with safe handling of unavailable or corrupted storage.
 - My Reservations with details, time-based statuses, and confirmed cancellation of upcoming demo reservations.
 - QR passes containing only a demo reference, with simulated entry during the scheduled time window and exit after recorded entry. These are not secure access credentials; no camera scanning or real gate integration is implemented.
-- A public operator simulation with facility summaries, Available/Reserved/Occupied counts, demo records, and persisted mock slot edits shared with public browsing.
-- Demo login and registration forms with basic validation and a visibility toggle for a fixed, read-only sample password. They collect no password and create no real account. The simulated session exists only until refresh or until it is ended.
+- An operator simulation with facility summaries, Available/Reserved/Occupied counts, demo records, and persisted mock slot edits shared with public browsing in that demo workspace. Editing requires the operator demo role and is limited to its fictional assignment list; guests and drivers see a read-only preview.
+- Two preconfigured demo role accounts with quick-fill, credential validation, password visibility, login/logout, and an identifier-only session that survives refresh. Registration remains an interface demonstration and creates no additional account. Password fields use only the public sample credentials and are never persisted or sent to a server.
 
-Reservations and favorites belong to this browser's site storage, not to an authenticated account. Different profiles, devices, or site addresses do not share them. Clearing site data removes them. Multiple tabs share changes where supported; saving reservations, cancellations, verification, and slot edits requires browser storage and Web Locks. No server verifies or protects this data.
+Reservations and favorites belong to this browser's site storage, not to a securely authenticated account. Guest, driver, and operator workspaces use separate storage keys; switching roles does not transfer reservations, favorites, or status edits between them. Existing guest data is retained. Different profiles, devices, or site addresses do not share data. Clearing site data removes it. Multiple tabs share the current demo session and changes where supported; saving reservations, cancellations, verification, and slot edits requires browser storage and Web Locks. No server verifies or protects this data.
+
+### Public Demo Accounts
+
+| Demo role | Email | Public sample password |
+| --- | --- | --- |
+| Driver | driver@parkiva.demo | DriverDemo123! |
+| Parking Operator | operator@parkiva.demo | OperatorDemo123! |
+
+The driver workspace starts with saved real Davao locations and upcoming, past, and cancelled mock reservations. The operator workspace starts with mock occupancy and reservations assigned to Aldevinco Pay Parking, SM City Davao Parking, and SM Lanang Premier Parking for this exercise only. The operator account does **not** own or manage those facilities in the real world. Public discovery remains available without login. Seed data is added only when an account's storage is absent, so subsequent logins do not reset edits or cancellations.
+
+Only the demo account identifier is stored as session data. These public credentials and frontend role checks are visible and editable in the browser; they provide no security or real staff authorization. Use no real credentials.
 
 ## How Parkiva Works
 

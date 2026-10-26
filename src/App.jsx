@@ -6,16 +6,22 @@ import ReservationHistory from './components/ReservationHistory'
 import DemoAuthForm from './components/DemoAuthForm'
 import { MockParkingProvider } from './components/MockParkingContext'
 import OperatorDashboard from './components/OperatorDashboard'
+import { DemoAccountProvider, useDemoAccount } from './components/DemoAccountContext'
+import DriverDashboard from './components/DriverDashboard'
 
 export default function App() {
-  return <MockParkingProvider><ParkivaApp /></MockParkingProvider>
+  return <DemoAccountProvider><AccountWorkspace /></DemoAccountProvider>
+}
+
+function AccountWorkspace() {
+  const { account } = useDemoAccount()
+  return <MockParkingProvider key={account?.id || 'guest'}><ParkivaApp /></MockParkingProvider>
 }
 
 function ParkivaApp() {
   const [guestOpen, setGuestOpen] = useState(false)
-  const [demoSession, setDemoSession] = useState(null)
-  const [sessionNotice, setSessionNotice] = useState('')
-  const [view, setView] = useState('browse')
+  const { account, login, logout, error: accountError } = useDemoAccount()
+  const [view, setView] = useState(account?.id === 'operator-demo' ? 'operator' : account ? 'driver' : 'browse')
   const guestRef = useRef(null)
   const guestButtonRef = useRef(null)
 
@@ -54,6 +60,7 @@ function ParkivaApp() {
     }
     if (view === 'login' || view === 'register') document.getElementById('demo-auth-heading')?.focus()
     if (view === 'operator') document.getElementById('operator-dashboard-heading')?.focus()
+    if (view === 'driver') document.getElementById('driver-dashboard-heading')?.focus()
   }, [view])
 
   function openAuth(mode) {
@@ -68,6 +75,7 @@ function ParkivaApp() {
           <img className="navbar-logo" src="/parkiva.png" alt="Parkiva" />
           <div className="nav-controls">
             <button className="nav-button" onClick={browse} aria-current={view === 'browse' ? 'page' : undefined}>Browse</button>
+            {account?.id === 'driver-demo' && <button className="nav-button" aria-current={view === 'driver' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('driver') }}>Driver Dashboard</button>}
             <button className="nav-button" aria-current={view === 'reservations' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('reservations') }}>My Reservations</button>
             <button className="nav-button" aria-current={view === 'operator' ? 'page' : undefined} onClick={() => { setGuestOpen(false); setView('operator') }}>Operator Demo</button>
             <div className="guest-control" ref={guestRef} onBlur={(event) => {
@@ -80,13 +88,13 @@ function ParkivaApp() {
                   <circle cx="12" cy="8" r="3.5" />
                   <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
                 </svg>
-                {demoSession ? 'Demo session' : 'Guest'}
+                {account ? `${account.role} demo` : 'Guest'}
                 <svg className="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
                   <path d="m4 6 4 4 4-4" />
                 </svg>
               </button>
               {guestOpen && <div className="guest-dropdown" id="guest-dropdown">
-                {demoSession ? <button onClick={() => { setDemoSession(null); setSessionNotice('Demo session ended. Browser-local reservations are unchanged.'); setGuestOpen(false); guestButtonRef.current?.focus() }}>End demo session</button> : <>
+                {account ? <button onClick={logout}>Log Out (demo)</button> : <>
                   <button onClick={() => openAuth('login')}>Log In</button>
                   <button onClick={() => openAuth('register')}>Register</button>
                 </>}
@@ -94,14 +102,16 @@ function ParkivaApp() {
             </div>
           </div>
         </nav>
-        <p className="demo-session-notice" role="status">{demoSession ? `Simulated session: ${demoSession.displayName}. This is not secure authentication. Reservations remain local to this browser, not account-linked.` : sessionNotice}</p>
+        <p className="demo-session-notice" role="status">{account ? `Simulated ${account.role} session. Only the demo account ID is saved. All data and role restrictions are browser-local demonstrations, not secure authentication or real facility management.` : ''}</p>
+        {accountError && <p className="demo-session-notice" role="alert">{accountError}</p>}
       </header>
       <main className="discovery-main">
       <div hidden={view !== 'browse'}><ParkingDiscovery /></div>
       {view === 'reservations' && <ReservationHistory onBrowse={browse} />}
-      {view === 'operator' && <OperatorDashboard onBrowse={browse} />}
+      {view === 'driver' && account?.id === 'driver-demo' && <DriverDashboard onBrowse={browse} />}
+      {view === 'operator' && <OperatorDashboard onBrowse={browse} onLogin={() => openAuth('login')} />}
       {(view === 'login' || view === 'register') && <DemoAuthForm key={view} mode={view} onSwitch={openAuth} onBrowse={browse}
-        onComplete={(session) => { setDemoSession(session); setSessionNotice(''); browse() }} />}
+        onComplete={login} />}
       <aside className="development" aria-labelledby="development-heading">
         <h2 id="development-heading"><span className="status-dot" aria-hidden="true" />Still in Development</h2>
         <p>Student demo. Location listings are real; availability and reservations are simulated.</p>

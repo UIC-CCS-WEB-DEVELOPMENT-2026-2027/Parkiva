@@ -1,3 +1,4 @@
+import { getDemoStorage } from './demoAccounts.js'
 import { validateReservationReview } from './reservationReviewValidation.js'
 import { parkingSlotsByFacility } from './parkingSlotData.js'
 import { notifyDemoDataChanged, readMockSlotOverrides, applyMockSlotOverrides, currentMockSlots } from './mockSlotState.js'
@@ -56,7 +57,7 @@ export function demoReservationStatus(record, now = new Date()) {
 
 export async function cancelDemoReservation(reference, options = {}) {
   try {
-    const storage = options.storage ?? globalThis.localStorage
+    const storage = options.storage ?? getDemoStorage()
     const locks = options.locks ?? globalThis.navigator?.locks
     if (!locks?.request) return { ok: false, error: 'This browser cannot safely update demo reservations. Browser storage and Web Locks must be available.' }
     return await locks.request(DEMO_RESERVATIONS_KEY, () => {
@@ -80,7 +81,7 @@ export async function cancelDemoReservation(reference, options = {}) {
 // Fail closed if storage or locking is unavailable rather than showing false success.
 export async function confirmDemoReservation(input, options = {}) {
   try {
-    const storage = options.storage ?? globalThis.localStorage
+    const storage = options.storage ?? getDemoStorage()
     const locks = options.locks ?? globalThis.navigator?.locks
     if (!locks?.request) return { ok: false, error: 'This browser cannot safely save demo reservations. Try a browser with local storage and Web Locks enabled.' }
     return await locks.request(DEMO_RESERVATIONS_KEY, () => {
