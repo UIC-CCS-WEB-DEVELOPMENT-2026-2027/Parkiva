@@ -32,3 +32,4 @@
   .parking-filters { padding: 16px; }
   .parking-filters label, .parking-filters .parking-search, .parking-reset { flex: 1 1 100%; }
 }
+.parking-map-link { display: inline-block; margin: 0 0 16px; color: var(--color-primary); font-size: 14px; line-height: 1.6; text-underline-offset: 3px; }

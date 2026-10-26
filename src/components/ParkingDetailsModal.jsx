@@ -60,13 +60,19 @@ export default function ParkingDetailsModal({ area, onClose, reservationDraft, o
           <button className="parking-details-modal-close" type="button" onClick={onClose} autoFocus aria-label="Close parking details">Close</button>
         </header>
         <p className="parking-details-modal-location">{area.location}</p>
+        <a className="parking-map-link" href={area.googleMapsUrl} target="_blank" rel="noopener noreferrer">Open in Google Maps<span className="parking-sr-only"> (new tab)</span></a>
         <dl className="parking-details-modal-facts">
           <div><dt>Availability (mock)</dt><dd>{area.availability}</dd></div>
-          <div><dt>Supported vehicles</dt><dd>{area.vehicles.join(', ')}</dd></div>
+          <div><dt>Vehicle options (demo)</dt><dd>{area.vehicles.join(', ')}</dd></div>
         </dl>
         <section aria-labelledby="parking-details-about">
           <h3 id="parking-details-about">About this parking area</h3>
           <p id="parking-details-description">{area.description}</p>
+        </section>
+        <section className="parking-location-sources" aria-labelledby="parking-location-sources">
+          <h3 id="parking-location-sources">Location sources</h3>
+          <p>Researched {area.researchedOn}. Sources verify the location and parking existence, not current availability, prices, hours, access, or partnership. Maps links search the premises, not a verified entrance.</p>
+          <ul>{area.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}<span className="parking-sr-only"> (new tab)</span></a></li>)}</ul>
         </section>
         <section aria-labelledby="parking-details-entrance">
           <h3 id="parking-details-entrance">Entrance information</h3>
@@ -75,7 +81,7 @@ export default function ParkingDetailsModal({ area, onClose, reservationDraft, o
         {(slotError || reservationError) && <p role="alert">{slotError} {reservationError}</p>}
         <ParkingReservationFlow key={area.id} facility={area} slots={slotsByFacility[area.id]} supportedVehicles={area.vehicles}
           draft={reservationDraft} onDraftChange={onDraftChange} onChooseParking={onClose} />
-        <p className="parking-details-modal-note">Fictional example for demonstration only. Availability is not live.</p>
+        <p className="parking-details-modal-note">Real location, simulated parking flow. All slots, vehicle options, and reservations are demo data. No actual reservation or facility partnership is created.</p>
       </div>
     </dialog>
   )

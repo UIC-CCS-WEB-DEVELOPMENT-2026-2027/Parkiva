@@ -8,4 +8,6 @@ Playwright is an optional external test tool, not an application dependency. If 
 
 The suite covers search, combined filters, sorting, favorites after reload, modal keyboard focus and backdrop dismissal, required/past/range/vehicle validation, stale-slot recovery, edit navigation, confirmation, QR entry/exit, history, cancellation, operator editing, demo registration, storage error/empty states, and horizontal overflow. It uses a fixed local clock so entry/exit checks do not depend on the real date.
 
+The Davao listing suite also checks source and Maps links, explicit photo placeholders, absence of remote photo requests, safe retirement of fictional favorites and slot overrides, and unchanged historical reservation snapshots. It does not treat working map searches as live availability or verified entrances.
+
 Supplementary storage unit tests cover cross-tab-style locking, quota/denied-storage failures, invalid data, duplicate references, and conflict prevention. These checks do not establish real availability, secure authentication, or real access control.

@@ -1,0 +1,34 @@
+# Davao parking location research
+
+Research date: 26 October 2026. Eight facilities are included, ordered with dedicated/venue car parks before mall parking. Parking labels identify facilities within premises; they are not claims of a registered business name, public admission rights, affiliation, or partnership.
+
+Only the real name/location and evidence of parking existence are carried into the directory. Historical sources do not establish that any particular entrance or service is currently operating. No source's capacities, rates, hours, or valet services are copied into the application. The four/six-bay layouts, vehicle options, availability, and all reservation actions are synthetic examples.
+
+## Evidence register
+
+| Listing | Verified location scope | Evidence |
+| --- | --- | --- |
+| Aldevinco Pay Parking | Former Aldevinco site, C.M. Recto corner Roxas Avenue | [Alsons Dev, August 2026](https://alsonsdev.com/alsons-dev-brings-new-energy-to-aldevinco-site-as-redevelopment-progresses/) confirms an operating paid parking facility. [Alsons Dev, October 2025](https://alsonsdev.com/alsons-dev-to-redevelop-aldevinco-to-support-davaos-growing-urban-landscape/) identifies the corner location. This is an interim redevelopment use, not the closed shopping center. |
+| Francisco Bangoy International Airport Parking | Passenger terminal frontage, Airport Road, Sasa | [Government PPP memorandum](https://ppp.gov.ph/wp-content/uploads/2017/04/Project-Info-Memorandum-Davao-20170224.pdf) identifies passenger parking in front of the terminal. [Independent airport parking directory](https://davaoairport.net/davao-airport-parking/) lists Airport Road. [CAAP airport project coverage](https://pia.gov.ph/news/davao-airport-terminal-expansion-targeted-for-dec-2026-completion/) identifies Sasa. Airport access restrictions are not verified here. |
+| Davao Doctors Hospital Steel Carpark | Malvar Street, hospital compound | [Hospital facility plans](https://ddh.com.ph/services-and-centers/zoning/) identify the Steel Carpark. [Historical SunStar report](https://www.sunstar.com.ph/davao/local-news/ddh-carpark-closed-after-vehicle-fell) identifies Malvar Street and a past temporary closure; it does not establish present opening status. Hospital visitors must check current admission directly. |
+| SM City Davao Parking | Quimpo Boulevard corner Tulip Drive, Ecoland, Matina | [SM Prime disclosure](https://www.pds.com.ph/wp-content/uploads/2026/04/SMPH-Debt-Securities-Program-OC-as-of-27-February-2020-clean.pdf) documents existing parking and the location. [DENR-EMB executive summary](https://r11.emb.gov.ph/wp-content/uploads/2023/09/SM-City-Davao-Executive-Summary-for-Public-Infor-EN.pdf) corroborates the address. Proposed expansions are not represented as verified open levels. |
+| SM Lanang Premier Parking | J.P. Laurel Avenue, San Antonio, Lanang | [SMX Davao](https://www.smxconventioncenter.com/smx-davao/) documents complex parking and its location. [DENR-EMB project description](https://r11.emb.gov.ph/wp-content/uploads/2025/09/SM-Lanang-Premier-Updated-Project-Description-09162025-Report-01.pdf) corroborates the site. |
+| Ayala Malls Abreeza Parking | J.P. Laurel Avenue, Bajada | [Ayala Malls directory](https://www.ayalamalls.com/explore/malls/store/AYALA-ABREEZA-21782565) identifies the mall address. [Edge Davao](https://edgedavao.net/indulge-lifestyle/2013/09/abreezas-first-ever-mall-valet-parking-service-in-mindanao/) documents basement parking historically; [October 2026 local reporting](https://davaopromos.com/2026/10/16/mall-parking-rates-in-davao-city-as-of-october-2026/) corroborates continued mall parking. No reported rates or historical valet promises are used. |
+| Gaisano Mall of Davao Parking | J.P. Laurel Avenue, Bajada | [Edge Davao, September 2025](https://edgedavao.net/latest-news/2025/09/councilor-calls-on-davao-mall-to-reconsider-parking-policy/) identifies existing parking and the avenue. [Waze directory](https://www.waze.com/live-map/directions/gaisano-mall-of-davao-j.p.-laurel-ave-davao-city?to=place.w.82313287.823198404.903005) corroborates customer parking at the mall. |
+| NCCC Mall Buhangin Parking | Tigatto Road, Buhangin | [NCCC company profile](https://nccc.com.ph/about/company-profile/) documents the opened Buhangin mall and basement parking. [NCCC Cinemas](https://cinemas.nccc.com.ph/contact-us) gives the Tigatto Road address. |
+
+Victoria Plaza was excluded because closure/redevelopment reports made its current parking status uncertain. Proposed-only projects and informal roadside suggestions were excluded. No private residential or staff-only parking is presented as guaranteed public access.
+
+## Maps links
+
+Each listing stores its exact query and a [Google Maps URL](https://developers.google.com/maps/documentation/urls/get-started) using `https://www.google.com/maps/search/?api=1&query=...`. All eight location searches were opened in an isolated Chromium browser and returned HTTP 200 during this research. Google Maps initially supplied a generic page title, so this is a working search-link check, not independent verification of a unique place ID or entrance pin. Facility existence and location claims rely on the evidence above. No Maps content, ratings, or images were scraped into the app.
+
+## Photo decision
+
+The available publisher and mapping photos did not provide an established reusable license for an exact parking location. A Wikimedia search did not establish suitable exact-facility parking photos. No authorized Google Places integration is configured, and this frontend-only scope cannot keep a private web-service key secret. Consequently every listing uses a plainly labeled photo placeholder, with no stock image, invented facade, hotlinked photo, copied Google photo, or private API key.
+
+Any future Places photo implementation must follow the current [Place Photos requirements](https://developers.google.com/maps/documentation/places/web-service/place-photos), including returned author attributions, photo reference expiry and caching restrictions, and applicable Google Maps Platform policies. This change makes no Places API or external photo requests and caches no Google imagery.
+
+## Existing browser data
+
+Real facilities get new stable `davao-*` IDs; no old fictional facility ID is repurposed. The existing favorites hook filters out retired/unknown IDs and saves only current IDs. Old demo reservation snapshots are retained as-is for history and never relabeled as a real facility. Known retired mock slot overrides are ignored safely; unrecognized/corrupt override data still fails closed. New status edits use only current facility IDs.

@@ -20,7 +20,7 @@ export default function ParkingSlotSelection({ slots = [], selectedId: controlle
   return (
     <section className="parking-slot-selection" aria-labelledby={headingId}>
       <h3 id={headingId}>Choose a parking slot</h3>
-      <p>Preview a slot selection. This does not reserve a space.</p>
+      <p>Synthetic demo slots, not the facility’s real bay numbers or capacity. Selecting one does not reserve a real space.</p>
       <ul className="parking-slot-legend" aria-label="Slot status legend">
         {['Available', 'Reserved', 'Occupied'].map((status) => (
           <li key={status}><span className={`parking-slot-key parking-slot-key--${status.toLowerCase()}`} aria-hidden="true" />{status}</li>

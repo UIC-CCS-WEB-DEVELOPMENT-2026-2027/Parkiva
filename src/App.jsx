@@ -104,7 +104,7 @@ function ParkivaApp() {
         onComplete={(session) => { setDemoSession(session); setSessionNotice(''); browse() }} />}
       <aside className="development" aria-labelledby="development-heading">
         <h2 id="development-heading"><span className="status-dot" aria-hidden="true" />Still in Development</h2>
-        <p>Student demo. All parking data and reservations are simulated.</p>
+        <p>Student demo. Location listings are real; availability and reservations are simulated.</p>
       </aside>
       </main>
       <Footer />

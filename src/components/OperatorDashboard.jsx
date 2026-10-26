@@ -48,7 +48,7 @@ export default function OperatorDashboard({ onBrowse }) {
       <label className="operator-facility-label" htmlFor="operator-facility">Manage mock facility</label>
       <select id="operator-facility" value={facilityId} disabled={saving} onChange={(event) => { setFacilityId(event.target.value); setMessage(''); setError('') }}>{areas.map((area) => <option key={area.id} value={area.id}>{area.name}</option>)}</select>
       <h2>Mock slots — {facility.name}</h2>
-      <p>Counts show current simulated statuses. Active reservation windows show Reserved; recorded entry without exit shows Occupied. Future bookings remain in the records below. Manual edits never cancel reservations or override these reservation states.</p>
+      <p>Slot counts and vehicle options are synthetic, not real facility capacity or admission policies. Active demo reservation windows show Reserved; recorded entry without exit shows Occupied. Future demo bookings remain in the records below. Manual edits never cancel reservations or override these reservation states.</p>
       <div className="operator-slot-grid">{manualSlots[facilityId].map((slot) => {
         const effective = slotsByFacility[facilityId].find((item) => item.id === slot.id).status
         return <div className="operator-slot" key={`${facilityId}-${slot.id}`}>

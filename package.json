@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test tests/*.test.js",
-    "test:browser": "node tests/browser/frontend-demo.mjs"
+    "test:browser": "node tests/browser/frontend-demo.mjs && node tests/browser/davao-locations.mjs"
   },
   "dependencies": {
     "qrcode.react": "^4.2.0",

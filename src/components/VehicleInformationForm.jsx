@@ -19,7 +19,7 @@ export default function VehicleInformationForm({ value, onChange, supportedVehic
 
   return (
     <form className="vehicle-information-form" ref={formRef} noValidate onSubmit={submit} aria-label="Vehicle information">
-      <p id={`${id}-supported`}>Supported vehicles: {supportedVehicles.join(', ') || 'None'}. Choose a type that matches your selected slot.</p>
+      <p id={`${id}-supported`}>Demo vehicle options: {supportedVehicles.join(', ') || 'None'}. These are simulated, not verified admission policies. Choose a type that matches your selected demo slot.</p>
       <div className="vehicle-information-fields">
         <div>
           <label htmlFor={`${id}-type`}>Vehicle type</label>
