@@ -3,9 +3,10 @@ import ParkingSlotSelection from './ParkingSlotSelection'
 import ReservationDateTimeSelection from './ReservationDateTimeSelection'
 import { validateReservationDateTime } from './reservationDateTime'
 import VehicleInformationForm from './VehicleInformationForm'
-import { validateVehicleInformation } from './vehicleInformation'
+import ReservationReview from './ReservationReview.jsx'
+import { validateReservationReview } from './reservationReviewValidation.js'
 
-export default function ParkingReservationFlow({ slots = [], supportedVehicles = [] }) {
+export default function ParkingReservationFlow({ facility, slots = [], supportedVehicles = [] }) {
   const [step, setStep] = useState('slots')
   const [selectedId, setSelectedId] = useState(null)
   const [dateTime, setDateTime] = useState({ date: '', arrival: '', departure: '' })
@@ -40,28 +41,12 @@ export default function ParkingReservationFlow({ slots = [], supportedVehicles =
         <p>Selected slot: {selectedSlot?.id} ({selectedSlot?.vehicle})</p>
         <VehicleInformationForm value={vehicle} onChange={setVehicle} supportedVehicles={supportedVehicles} slotVehicle={selectedSlot?.vehicle}
           onBack={() => setStep('datetime')} onContinue={() => {
-            if (!selectedSlot) setStep('slots')
-            else if (Object.keys(validateReservationDateTime(dateTime)).length > 0) setStep('datetime')
-            else if (Object.keys(validateVehicleInformation(vehicle, supportedVehicles, selectedSlot.vehicle)).length === 0) setStep('review')
+            const issues = validateReservationReview({ facility, slots, selectedId, dateTime, vehicle })
+            if (issues.length) setStep(issues[0].step)
+            else setStep('review')
           }} />
       </>}
-      {step === 'review' && <>
-        <dl className="reservation-flow-review">
-          <div><dt>Slot</dt><dd>{selectedSlot?.id} ({selectedSlot?.vehicle})</dd></div>
-          <div><dt>Date</dt><dd>{dateTime.date}</dd></div>
-          <div><dt>Arrival</dt><dd>{dateTime.arrival}</dd></div>
-          <div><dt>Departure</dt><dd>{dateTime.departure}</dd></div>
-          <div><dt>Vehicle type</dt><dd>{vehicle.type}</dd></div>
-          <div><dt>Plate number</dt><dd>{vehicle.plate.trim()}</dd></div>
-          {vehicle.model.trim() && <div><dt>Make/model</dt><dd>{vehicle.model.trim()}</dd></div>}
-        </dl>
-        <p>Preview only. No reservation has been made.</p>
-        <div className="reservation-flow-actions">
-          <button type="button" onClick={() => setStep('vehicle')}>Edit vehicle information</button>
-          <button type="button" onClick={() => setStep('datetime')}>Edit date and time</button>
-          <button type="button" onClick={() => setStep('slots')}>Change slot</button>
-        </div>
-      </>}
+      {step === 'review' && <ReservationReview facility={facility} slots={slots} selectedId={selectedId} vehicle={vehicle} dateTime={dateTime} onEdit={setStep} />}
     </section>
   )
 }
