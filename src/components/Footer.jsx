@@ -37,7 +37,10 @@ export default function Footer({ onBrowse, onHost, onReservations }) {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Parkiva · Academic marketplace preview</span>
-        <span>Browser-local reservations · No real bookings or payments</span>
+        <span>
+          Sample marketplace · Prices, hosts and availability are simulated. No real bookings,
+          payments or parking access.
+        </span>
       </div>
     </footer>
   )

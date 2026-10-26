@@ -77,7 +77,7 @@ try {
     await fit(page, width)
     await page.keyboard.press('Escape')
   }
-  await page.getByRole('searchbox').fill('Tigatto')
+  await page.locator('input[type="search"]').fill('Tigatto')
   assert.equal(await page.locator('.parking-card').count(), 1)
   await button(page, 'My Reservations').click()
   await page.getByRole('heading', { name: 'Sample Courtyard Parking', exact: true }).waitFor()

@@ -22,7 +22,7 @@ const inGroup = (record, group, now) => {
         : status === group)
   )
 }
-export default function ReservationHistory({ onBrowse, embedded = false }) {
+export default function ReservationHistory({ onBrowse, onViewPass, embedded = false }) {
   const [records, setRecords] = useState([])
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -137,6 +137,7 @@ export default function ReservationHistory({ onBrowse, embedded = false }) {
               key={record.reference}
               reservation={record}
               now={now}
+              onViewPass={onViewPass}
               onUpdated={(notice) => {
                 setMessage(notice)
                 refresh()

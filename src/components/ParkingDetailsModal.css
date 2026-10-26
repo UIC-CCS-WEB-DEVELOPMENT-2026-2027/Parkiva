@@ -29,6 +29,7 @@
 }
 .parking-details-modal-header > span {
   display: flex;
+  min-width: 0;
   gap: 6px;
   align-items: center;
   font-size: 12px;
@@ -36,8 +37,21 @@
 }
 .parking-details-modal-header > div {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 12px;
+}
+.parking-details-modal-header > div > .button {
+  white-space: nowrap;
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.reservation-flow-actions button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
 }
 .details-save {
   font-size: 12px;

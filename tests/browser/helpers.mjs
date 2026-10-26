@@ -11,7 +11,14 @@ export const launch = () =>
       ? { executablePath: process.env.PARKIVA_CHROMIUM_PATH }
       : {}),
   })
-export const button = (page, name) => page.getByRole('button', { name, exact: true })
+export const button = (page, name) =>
+  (['Explore', 'Saved', 'My Reservations'].includes(name)
+    ? page.getByRole('navigation', { name: 'Main navigation' })
+    : page
+  ).getByRole('button', {
+    name: name === 'Host workspace' ? /^(Host workspace|Workspace)$/ : name,
+    exact: true,
+  })
 export async function fit(page, width) {
   assert.ok(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -24,18 +31,41 @@ export async function fit(page, width) {
     )
 }
 export async function login(page, role) {
-  await button(page, 'Guest').click()
-  await button(page, 'Log In').click()
-  await button(page, 'Quick-fill ' + role).click()
-  await button(page, 'Log In (demo)').click()
+  const host = role === 'Parking Operator'
+  if (host) {
+    await button(page, 'List your space').click()
+    await button(page, 'Host sign in').click()
+  } else
+    await page
+      .getByRole('navigation', { name: 'Main navigation' })
+      .getByRole('button', { name: 'Sign in', exact: true })
+      .click()
+  await credentials(page, role)
+  await page.getByRole('form').getByRole('button', { name: 'Sign in', exact: true }).click()
   await page
     .locator(role === 'Driver' ? '#driver-dashboard-heading' : '#operator-dashboard-heading')
     .waitFor()
 }
 export async function logout(page, role) {
-  await button(page, role === 'Driver' ? 'Driver · demo' : 'Host · demo').click()
-  await button(page, 'Log Out (demo)').click()
-  await button(page, 'Guest').waitFor()
+  await button(page, 'Account').click()
+  await button(page, 'Sign out').click()
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('button', { name: 'Sign in', exact: true })
+    .waitFor()
+}
+export async function credentials(page, role = 'Driver') {
+  const host = role === 'Parking Operator'
+  await page
+    .getByLabel('Email address', { exact: true })
+    .fill(host ? 'operator@parkiva.demo' : 'driver@parkiva.demo')
+  await page
+    .getByLabel('Password', { exact: true })
+    .fill(host ? 'OperatorDemo123!' : 'DriverDemo123!')
+}
+export async function driverDashboard(page) {
+  await button(page, 'Account').click()
+  await button(page, 'Your account').click()
 }
 export const openDetails = (page, name = 'Aldevinco Pay Parking') =>
   button(page, 'View Details for ' + name).click()

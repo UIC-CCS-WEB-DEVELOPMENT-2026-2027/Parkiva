@@ -124,6 +124,12 @@
   gap: 8px;
 }
 .reservation-history-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.reservation-history-actions button {
   min-height: 40px;
   padding: 9px 11px;
   border: 1px solid #d7e0e7;

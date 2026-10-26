@@ -1,3 +1,4 @@
+import Icon from './Icon'
 import { useEffect, useRef, useState } from 'react'
 import ParkingSlotSelection from './ParkingSlotSelection'
 import ReservationDateTimeSelection from './ReservationDateTimeSelection'
@@ -15,6 +16,8 @@ export default function ParkingReservationFlow({
   draft,
   onDraftChange,
   onChooseParking,
+  onReservations,
+  onViewPass,
 }) {
   const [localDraft, setLocalDraft] = useState(createReservationDraft)
   const current = draft ?? localDraft
@@ -103,6 +106,7 @@ export default function ParkingReservationFlow({
           />
           <div className="reservation-flow-actions">
             <button type="button" onClick={onChooseParking}>
+              <Icon name="back" size={16} />
               Change parking facility
             </button>
             <button
@@ -194,6 +198,8 @@ export default function ParkingReservationFlow({
       {step === 'confirmation' && confirmation && (
         <DemoReservationConfirmation
           reservation={confirmation}
+          onReservations={onReservations}
+          onViewPass={onViewPass}
           onRestart={() => {
             const next = createReservationDraft()
             setFlowNotice('')

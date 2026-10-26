@@ -1,0 +1,86 @@
+.host-welcome {
+  padding: 24px 0 42px;
+}
+.host-back {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  text-decoration: none;
+  font-size: 12px;
+  margin-bottom: 24px;
+}
+.host-welcome-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 60px;
+}
+.host-welcome h1 {
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.16;
+}
+.host-welcome-intro {
+  font-size: 14px;
+  color: #647b8b;
+  margin: 14px 0 24px;
+}
+.hosting-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hosting-steps li {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--color-primary);
+  font-size: 13px;
+}
+.hosting-steps svg {
+  margin-top: 2px;
+  color: #69849a;
+}
+.hosting-steps small {
+  display: block;
+  margin-top: 5px;
+  color: #718390;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.host-welcome-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 25px;
+}
+.host-welcome-actions .text-button {
+  font-size: 12px;
+}
+.host-welcome-note {
+  max-width: 410px;
+  margin: 16px 0 0;
+  color: #7a8892;
+  font-size: 10px;
+}
+.host-welcome-layout > figure {
+  height: 360px;
+  border-radius: 6px;
+}
+@media (max-width: 760px) {
+  .host-welcome-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .host-welcome {
+    padding-top: 18px;
+  }
+  .host-welcome-layout > figure {
+    height: 180px;
+  }
+  .host-welcome h1 {
+    font-size: 30px;
+  }
+}
