@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react'
 import { localDateValue, validateReservationDateTime } from './reservationDateTime'
 import './ReservationDateTimeSelection.css'
 
-export default function ReservationDateTimeSelection({ value, onChange, onContinue, onBack }) {
+export default function ReservationDateTimeSelection({ value, onChange, onContinue, onBack, continueLabel = 'Review selection' }) {
   const id = useId()
   const formRef = useRef(null)
   const [submitted, setSubmitted] = useState(false)
@@ -38,7 +38,7 @@ export default function ReservationDateTimeSelection({ value, onChange, onContin
       {Object.keys(errors).length > 0 && <p className="reservation-datetime-error" role="alert">Check the highlighted date and time fields.</p>}
       <div className="reservation-flow-actions">
         <button type="button" onClick={onBack}>Back to slots</button>
-        <button type="submit" className="reservation-flow-primary">Review selection</button>
+        <button type="submit" className="reservation-flow-primary">{continueLabel}</button>
       </div>
     </form>
   )
